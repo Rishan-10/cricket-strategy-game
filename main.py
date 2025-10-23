@@ -12,8 +12,6 @@ import json
 import os
 import random
 
-from pygame_menu.themes import THEME_BLUE
-
 # Setting up pygame
 pygame.init()
 pygame.mixer.init()
@@ -40,6 +38,10 @@ def get_video_frame(video):
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     frame = pygame.surfarray.make_surface(frame.swapaxes(0, 1))
     return frame
+
+# Variable to determine whether the user wants to play single or double player
+# 1 = 1 player, 2 = 2 player
+game_mode = 0
 
 # Default value for volume
 volume = 0.5
@@ -133,27 +135,31 @@ def delete_saved_settings():
         delete_label.set_title("No saved settings found.")
         pygame.time.set_timer(pygame.USEREVENT + 3, 1500)
 
+# Function for resetting the toss menu
+def reset_toss_menu():
+    toss_menu.clear()
+    toss_menu.add.label("Choose Heads or Tails:", font_size=60)
+    toss_menu.add.button("Heads", heads)
+    toss_menu.add.button("Tails", tails)
+
 # Functions for single and double player mode menus
 def single_player_mode():
     play._open(single_player)
+    game_mode = 1
 def double_player_mode():
     play._open(double_player)
+    game_mode = 2
 
-# Functions for 1 over, 2 overs, and 5 overs for single player
-def single_one_over():
+# Functions for 1 over, 2 overs, and 5 overs
+def one_over():
+    reset_toss_menu()
     single_player._open(toss_menu)
-def single_two_overs():
+def two_overs():
+    reset_toss_menu()
     single_player._open(toss_menu)
-def single_five_overs():
+def five_overs():
+    reset_toss_menu()
     single_player._open(toss_menu)
-
-# Functions for 1 over, 2 overs, and 5 overs for double player
-def double_one_over():
-    double_player._open(toss_menu)
-def double_two_overs():
-    double_player._open(toss_menu)
-def double_five_overs():
-    double_player._open(toss_menu)
 
 # Heads = 0, Tails = 1
 # Bat = 0, Bowl = 1
@@ -165,7 +171,7 @@ def heads():
     single_player._open(toss_menu)
     if random.randint(0,1) == 0:
         toss_menu.add.label("You won.")
-        toss_menu.add.label("Do you want to bat or bowl?: ")
+        toss_menu.add.label("Do you want to bat or bowl?: ", font_size=80)
         toss_menu.add.button("Bat")
         toss_menu.add.button("Bowl")
     else:
@@ -188,7 +194,7 @@ def tails():
             toss_menu.add.label("You have to bowl.")
     else:
         toss_menu.add.label("You won.")
-        toss_menu.add.label("Do you want to bat or bowl?: ")
+        toss_menu.add.label("Do you want to bat or bowl?: ", font_size=80)
         toss_menu.add.button("Bat")
         toss_menu.add.button("Bowl")
 
@@ -260,15 +266,15 @@ mode_custom_theme.title_font_color = (255, 255, 255)
 
 # Single player menu creation
 single_player = pygame_menu.Menu("Single Player Mode", 1450, 890, theme=mode_custom_theme)
-single_player.add.button('1 over', single_one_over)
-single_player.add.button('2 overs', single_two_overs)
-single_player.add.button('5 overs', single_five_overs)
+single_player.add.button('1 over', one_over)
+single_player.add.button('2 overs', two_overs)
+single_player.add.button('5 overs', five_overs)
 
 # Double player menu creation
 double_player = pygame_menu.Menu("Double Player Mode", 1450, 890, theme=mode_custom_theme)
-double_player.add.button('1 over', double_one_over)
-double_player.add.button('2 overs', double_two_overs)
-double_player.add.button('5 overs', double_five_overs)
+double_player.add.button('1 over', one_over)
+double_player.add.button('2 overs', two_overs)
+double_player.add.button('5 overs', five_overs)
 
 # Making a custom theme for toss menu
 toss_custom_theme = pygame_menu.themes.THEME_BLUE.copy()
@@ -281,7 +287,8 @@ toss_custom_theme.title_font_color = (255, 255, 255)
 
 
 # Toss menu creation
-toss_menu = pygame_menu.Menu("Toss", 1450, 890, theme=toss_custom_theme)
+toss_menu = pygame_menu.Menu("Toss", 1450, 890, theme=toss_custom_theme, onclose=reset_toss_menu)
+toss_menu.add.label("Choose Heads or Tails:", font_size=80)
 toss_menu.add.button("Heads", heads)
 toss_menu.add.button("Tails", tails)
 

@@ -155,10 +155,42 @@ def double_two_overs():
 def double_five_overs():
     double_player._open(toss_menu)
 
+# Heads = 0, Tails = 1
+# Bat = 0, Bowl = 1
+# Function if the user chose heads
 def heads():
-    pass
+    toss_menu.clear()
+    main_menu._open(play)
+    play._open(single_player)
+    single_player._open(toss_menu)
+    if random.randint(0,1) == 0:
+        toss_menu.add.label("You won.")
+        toss_menu.add.label("Do you want to bat or bowl?: ")
+        toss_menu.add.button("Bat")
+        toss_menu.add.button("Bowl")
+    else:
+        toss_menu.add.label("You lost.")
+        if random.randint(0,1) == 0:
+            toss_menu.add.label("You have to bat.")
+        else:
+            toss_menu.add.label("You have to bowl.")
+# Function if the user chose heads
 def tails():
-    pass
+    toss_menu.clear()
+    main_menu._open(play)
+    play._open(single_player)
+    single_player._open(toss_menu)
+    if random.randint(0, 1) == 0:
+        toss_menu.add.label("You lost.")
+        if random.randint(0,1) == 0:
+            toss_menu.add.label("You have to bat.")
+        else:
+            toss_menu.add.label("You have to bowl.")
+    else:
+        toss_menu.add.label("You won.")
+        toss_menu.add.label("Do you want to bat or bowl?: ")
+        toss_menu.add.button("Bat")
+        toss_menu.add.button("Bowl")
 
 # Making a custom theme for my main menu
 main_custom_theme = pygame_menu.themes.THEME_DARK.copy()

@@ -10,6 +10,9 @@ import cv2
 from sys import exit
 import json
 import os
+import random
+
+from pygame_menu.themes import THEME_BLUE
 
 # Setting up pygame
 pygame.init()
@@ -133,10 +136,29 @@ def delete_saved_settings():
 # Functions for single and double player mode menus
 def single_player_mode():
     play._open(single_player)
-    play_background_video.set(cv2.CAP_PROP_POS_FRAMES, 0)
 def double_player_mode():
     play._open(double_player)
-    play_background_video.set(cv2.CAP_PROP_POS_FRAMES, 0)
+
+# Functions for 1 over, 2 overs, and 5 overs for single player
+def single_one_over():
+    single_player._open(toss_menu)
+def single_two_overs():
+    single_player._open(toss_menu)
+def single_five_overs():
+    single_player._open(toss_menu)
+
+# Functions for 1 over, 2 overs, and 5 overs for double player
+def double_one_over():
+    double_player._open(toss_menu)
+def double_two_overs():
+    double_player._open(toss_menu)
+def double_five_overs():
+    double_player._open(toss_menu)
+
+def heads():
+    pass
+def tails():
+    pass
 
 # Making a custom theme for my main menu
 main_custom_theme = pygame_menu.themes.THEME_DARK.copy()
@@ -196,6 +218,7 @@ play.add.button('Double Player Mode', double_player_mode)
 
 # Making a custom theme for my single and double player menu
 mode_custom_theme = pygame_menu.themes.THEME_DARK.copy()
+mode_custom_theme.background_color = (0, 0, 0, 0)
 mode_custom_theme.widget_font_size = 70
 mode_custom_theme.widget_padding = 25
 mode_custom_theme.widget_margin = (0, 40)
@@ -205,9 +228,30 @@ mode_custom_theme.title_font_color = (255, 255, 255)
 
 # Single player menu creation
 single_player = pygame_menu.Menu("Single Player Mode", 1450, 890, theme=mode_custom_theme)
+single_player.add.button('1 over', single_one_over)
+single_player.add.button('2 overs', single_two_overs)
+single_player.add.button('5 overs', single_five_overs)
 
 # Double player menu creation
 double_player = pygame_menu.Menu("Double Player Mode", 1450, 890, theme=mode_custom_theme)
+double_player.add.button('1 over', double_one_over)
+double_player.add.button('2 overs', double_two_overs)
+double_player.add.button('5 overs', double_five_overs)
+
+# Making a custom theme for toss menu
+toss_custom_theme = pygame_menu.themes.THEME_BLUE.copy()
+toss_custom_theme.widget_font_size = 70
+toss_custom_theme.widget_padding = 25
+toss_custom_theme.widget_margin = (0, 40)
+toss_custom_theme.title_font_size = 90
+toss_custom_theme.title_bar_style = pygame_menu.widgets.MENUBAR_STYLE_SIMPLE
+toss_custom_theme.title_font_color = (255, 255, 255)
+
+
+# Toss menu creation
+toss_menu = pygame_menu.Menu("Toss", 1450, 890, theme=toss_custom_theme)
+toss_menu.add.button("Heads", heads)
+toss_menu.add.button("Tails", tails)
 
 # Back arrow creation
 arrow = pygame_menu.widgets.LeftArrowSelection(arrow_size=(10, 15))
@@ -244,12 +288,12 @@ while running:
             pygame.time.set_timer(pygame.USEREVENT + 3, 0)
 
     # Checking which menu screen I am on
-    if main_menu.get_current() == play:
+    if main_menu.get_current() == main_menu:
         # Playing main menu background menu screen video if on main menu screen
-        frame = get_video_frame(play_background_video)
+        frame = get_video_frame(main_background_video)
     else:
         # Playing play menu background menu screen video if on play menu screen
-        frame = get_video_frame(main_background_video)
+        frame = get_video_frame(play_background_video)
 
     # Adding the video to the screen
     screen.blit(frame, (0, 0))

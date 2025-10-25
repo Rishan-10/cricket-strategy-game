@@ -161,28 +161,34 @@ def double_player_mode():
 
 # Functions for 1 over, 2 overs, and 5 overs for single player
 def single_one_over():
+    global overs
     reset_toss_menu()
     overs = 1
     single_player._open(toss_menu)
 def single_two_overs():
+    global overs
     reset_toss_menu()
     overs = 2
     single_player._open(toss_menu)
 def single_five_overs():
+    global overs
     reset_toss_menu()
     overs = 5
     single_player._open(toss_menu)
 
 # Functions for 1 over, 2 overs, and 5 overs for double player
 def double_one_over():
+    global overs
     reset_toss_menu()
     overs = 1
     double_player._open(toss_menu)
 def double_two_overs():
+    global overs
     reset_toss_menu()
     overs = 2
     double_player._open(toss_menu)
 def double_five_overs():
+    global overs
     reset_toss_menu()
     overs = 5
     double_player._open(toss_menu)

@@ -195,35 +195,35 @@ def double_five_overs():
 
 # Functions to know which option the user picked if they won the toss
 def chose_bat():
-    global toss_result, game_mode, overs
+    global toss_result, game_mode, overs, screen
     toss_result = "bat"
     if game_mode == 1 and overs == 1:
-        single_one(toss_result)
+        single_one(screen, toss_result)
     elif game_mode == 1 and overs == 2:
-        single_two(toss_result)
+        single_two(screen, toss_result)
     elif game_mode == 1 and overs == 5:
-        single_five(toss_result)
+        single_five(screen, toss_result)
     elif game_mode == 2 and overs == 1:
-        double_one(toss_result)
+        double_one(screen, toss_result)
     elif game_mode == 2 and overs == 2:
-        double_two(toss_result)
+        double_two(screen, toss_result)
     elif game_mode == 2 and overs == 5:
-        double_five(toss_result)
+        double_five(screen, toss_result)
 def chose_bowl():
-    global toss_result, game_mode, overs
+    global toss_result, game_mode, overs, screen
     toss_result = "bowl"
     if game_mode == 1 and overs == 1:
-        single_one(toss_result)
+        single_one(screen, toss_result)
     elif game_mode == 1 and overs == 2:
-        single_two(toss_result)
+        single_two(screen, toss_result)
     elif game_mode == 1 and overs == 5:
-        single_five(toss_result)
+        single_five(screen, toss_result)
     elif game_mode == 2 and overs == 1:
-        double_one(toss_result)
+        double_one(screen, toss_result)
     elif game_mode == 2 and overs == 2:
-        double_two(toss_result)
+        double_two(screen, toss_result)
     elif game_mode == 2 and overs == 5:
-        double_five(toss_result)
+        double_five(screen, toss_result)
 
 # Heads = 0, Tails = 1
 # Bat = 0, Bowl = 1
@@ -244,11 +244,11 @@ def heads():
         if random.randint(0,1) == 0:
             toss_menu.add.label("You have to bat.")
             toss_result = "bat"
-            chose_bat()
+            toss_menu.add.button("Continue", chose_bat)
         else:
             toss_menu.add.label("You have to bowl.")
             toss_result = "bowl"
-            chose_bowl()
+            toss_menu.add.button("Continue", chose_bowl)
 
 # Function if the user chose heads
 def tails():
@@ -262,11 +262,11 @@ def tails():
         if random.randint(0,1) == 0:
             toss_menu.add.label("You have to bat.")
             toss_result = "bat"
-            chose_bat()
+            toss_menu.add.button("Continue", chose_bat)
         else:
             toss_menu.add.label("You have to bowl.")
             toss_result = "bowl"
-            chose_bowl()
+            toss_menu.add.button("Continue", chose_bowl)
     else:
         toss_menu.add.label("You won.")
         toss_menu.add.label("Do you want to bat or bowl?: ", font_size=80)
@@ -359,7 +359,6 @@ toss_custom_theme.widget_margin = (0, 40)
 toss_custom_theme.title_font_size = 90
 toss_custom_theme.title_bar_style = pygame_menu.widgets.MENUBAR_STYLE_SIMPLE
 toss_custom_theme.title_font_color = (255, 255, 255)
-
 
 # Toss menu creation
 toss_menu = pygame_menu.Menu("Toss", 1450, 890, theme=toss_custom_theme, onclose=reset_toss_menu)

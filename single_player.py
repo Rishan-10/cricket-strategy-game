@@ -13,11 +13,11 @@ length = ["yorker", "full", "good", "short"]
 line = ["outside off stump", "on the stumps", "outside leg stumps"]
 
 # Different types of outcomes
-outcomes = ["Dot Ball", "1 run", "2 runs", "3 runs", "4 runs", "6 runs", "Bowled out", "Caught out", "LBW", "Run out"]
+outcomes = ["Dot Ball", "1 run", "2 runs", "3 runs", "4 runs", "6 runs", "Bowled out", "Caught out", "LBW", "Run out", "Wide", "No ball"]
 
-def single_one(toss_result):
+def single_one(screen, toss_result):
     pass
-def single_two(toss_result):
+def single_two(screen, toss_result):
     pass
-def single_five(toss_result):
+def single_five(screen, toss_result):
     pass

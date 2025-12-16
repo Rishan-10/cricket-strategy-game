@@ -82,10 +82,12 @@ line_positions = {
 # Different types of outcomes
 outcomes = ["Dot Ball", "1 run", "2 runs", "3 runs", "4 runs", "6 runs", "Bowled out", "Caught out", "LBW", "Run out", "Wide", "No ball"]
 
-def batting_first():
-    pass
-    """
-    while True:
+def batting_first(screen):
+    global line_index, length_index, final_line, final_length
+    running = True
+    clock = pygame.time.Clock()
+
+    while running:
         print("Player 2 bowling")
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -129,11 +131,12 @@ def batting_first():
 
         pygame.display.update()
         clock.tick(38)
-    """
 
-def bowling_first():
-    pass
-    """
+def bowling_first(screen):
+    global line_index, length_index, final_line, final_length
+    running = True
+    clock = pygame.time.Clock()
+
     while True:
         print("Player 1 bowling")
         for event in pygame.event.get():
@@ -178,63 +181,15 @@ def bowling_first():
 
         pygame.display.update()
         clock.tick(38)
-    """
 
 def double_one(screen, toss_result):
-    global line_index, length_index, final_line, final_length
     # Setting up the new screen
     pygame.display.set_caption("Double Player - One Over")
-    clock = pygame.time.Clock()
-    running = True
 
-    while running:
-        if toss_result == "bowl":
-            bowling_first()
-        elif toss_result == "bat":
-            batting_first()
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.mixer.music.stop()
-                pygame.quit()
-                exit()
-                running = False
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = pygame.mouse.get_pos()
-
-                if up_button.is_clicked(mouse_pos):
-                    length_index = max(0, length_index - 1)
-
-                elif down_button.is_clicked(mouse_pos):
-                    length_index = min(3, length_index + 1)
-
-                elif left_button.is_clicked(mouse_pos):
-                    line_index = min(2, line_index + 1)
-
-                elif right_button.is_clicked(mouse_pos):
-                    line_index = max(0, line_index - 1)
-
-                elif ok_button.is_clicked(mouse_pos):
-                    final_length = lengths[length_index]
-                    final_line = lines[line_index]
-
-        current_length = lengths[length_index]
-        current_line = lines[line_index]
-
-        target_x = line_positions[current_line]
-        target_y = length_positions[current_length]
-
-        screen.blit(pitch, (0, 0))
-        draw_target_circle(screen, target_x, target_y)
-        mouse_pos = pygame.mouse.get_pos()
-
-        for btn in buttons:
-            hovered = btn.is_clicked(mouse_pos)
-            btn.draw(screen, hovered)
-
-        pygame.display.update()
-        clock.tick(38)
+    if toss_result == "bowl":
+        bowling_first(screen)
+    elif toss_result == "bat":
+        batting_first(screen)
 
 def double_two(screen, toss_result):
     pass

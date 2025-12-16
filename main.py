@@ -295,8 +295,8 @@ def double_heads():
     else:
         toss_menu_double.add.label("Player 2 won the toss!", font_size=70)
         toss_menu_double.add.label("Player 2, choose to bat or bowl:", font_size=60)
-        toss_menu_double.add.button("Bat", chose_bat)
-        toss_menu_double.add.button("Bowl", chose_bowl)
+        toss_menu_double.add.button("Bat", chose_bowl)
+        toss_menu_double.add.button("Bowl", chose_bat)
 
 # Function if the user chose tails and is playing double player
 def double_tails():
@@ -313,8 +313,8 @@ def double_tails():
     else:
         toss_menu_double.add.label("Player 2 won the toss!", font_size=70)
         toss_menu_double.add.label("Player 2, choose to bat or bowl:", font_size=60)
-        toss_menu_double.add.button("Bat", chose_bat)
-        toss_menu_double.add.button("Bowl", chose_bowl)
+        toss_menu_double.add.button("Bat", chose_bowl)
+        toss_menu_double.add.button("Bowl", chose_bat)
 
 # Making a custom theme for my main menu
 main_custom_theme = pygame_menu.themes.THEME_DARK.copy()

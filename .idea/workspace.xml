@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="07a9e0e9-f222-4f85-936c-adf8bba548b1" name="Changes" comment="Fixed toss logic for double player.">
+    <list default="true" id="07a9e0e9-f222-4f85-936c-adf8bba548b1" name="Changes" comment="Added arrow buttons to move marker on pitch while bowling for double player mode.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/double_player.py" beforeDir="false" afterPath="$PROJECT_DIR$/double_player.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
@@ -146,7 +146,15 @@
       <option name="project" value="LOCAL" />
       <updated>1761483282462</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Added arrow buttons to move marker on pitch while bowling for double player mode.">
+      <option name="closed" value="true" />
+      <created>1765747221820</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1765747221820</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -158,6 +166,7 @@
     <MESSAGE value="Added the different options in my game." />
     <MESSAGE value="Added screen for double_player.py when the player starts the game." />
     <MESSAGE value="Fixed toss logic for double player." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed toss logic for double player." />
+    <MESSAGE value="Added arrow buttons to move marker on pitch while bowling for double player mode." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added arrow buttons to move marker on pitch while bowling for double player mode." />
   </component>
 </project>

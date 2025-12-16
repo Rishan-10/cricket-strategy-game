@@ -42,6 +42,10 @@ front_foot_shots = ["forward defense", "sweep", "reverse sweep", "scoop", "cover
 back_foot_shots = ["backward defense", "pull shot", "backfoot punch", "square cut", "upper cut"]
 shot = "leave"
 
+# Final choices of the user
+final_length = ""
+final_line = ""
+
 # Background image
 pitch = pygame.image.load("pitch_background.png")
 
@@ -52,7 +56,7 @@ off_spin_balls = ["off spin", "doosra", "arm ball"]
 
 # Different types of length and line
 lengths = ["yorker", "full", "good", "short"]
-lines = ["outside_off", "stumps", "outside_leg"]
+lines = ["outside_leg", "stumps", "outside_off"]
 
 length_index = 2
 line_index = 1
@@ -63,16 +67,16 @@ def draw_target_circle(screen, x, y):
     pygame.draw.circle(screen, (0, 135, 245), (x, y), 80, 10)
 
 length_positions = {
-    "yorker": 620,
-    "full": 540,
-    "good": 450,
-    "short": 300
+    "short": 620,
+    "good": 540,
+    "full": 450,
+    "yorker": 300
 }
 
 line_positions = {
-    "outside_leg": 550,
+    "outside_off": 550,
     "stumps": 715,
-    "outside_off": 850
+    "outside_leg": 850
 }
 
 # Different types of outcomes
@@ -80,12 +84,104 @@ outcomes = ["Dot Ball", "1 run", "2 runs", "3 runs", "4 runs", "6 runs", "Bowled
 
 def batting_first():
     pass
+    """
+    while True:
+        print("Player 2 bowling")
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.mixer.music.stop()
+                pygame.quit()
+                exit()
+                break
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+
+                if up_button.is_clicked(mouse_pos):
+                    length_index = max(0, length_index - 1)
+
+                elif down_button.is_clicked(mouse_pos):
+                    length_index = min(3, length_index + 1)
+
+                elif left_button.is_clicked(mouse_pos):
+                    line_index = min(2, line_index + 1)
+
+                elif right_button.is_clicked(mouse_pos):
+                    line_index = max(0, line_index - 1)
+
+                elif ok_button.is_clicked(mouse_pos):
+                    final_length = lengths[length_index]
+                    final_line = lines[line_index]
+
+        current_length = lengths[length_index]
+        current_line = lines[line_index]
+
+        target_x = line_positions[current_line]
+        target_y = length_positions[current_length]
+
+        screen.blit(pitch, (0, 0))
+        draw_target_circle(screen, target_x, target_y)
+        mouse_pos = pygame.mouse.get_pos()
+
+        for btn in buttons:
+            hovered = btn.is_clicked(mouse_pos)
+            btn.draw(screen, hovered)
+
+        pygame.display.update()
+        clock.tick(38)
+    """
 
 def bowling_first():
     pass
+    """
+    while True:
+        print("Player 1 bowling")
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.mixer.music.stop()
+                pygame.quit()
+                exit()
+                break
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+
+                if up_button.is_clicked(mouse_pos):
+                    length_index = max(0, length_index - 1)
+
+                elif down_button.is_clicked(mouse_pos):
+                    length_index = min(3, length_index + 1)
+
+                elif left_button.is_clicked(mouse_pos):
+                    line_index = min(2, line_index + 1)
+
+                elif right_button.is_clicked(mouse_pos):
+                    line_index = max(0, line_index - 1)
+
+                elif ok_button.is_clicked(mouse_pos):
+                    final_length = lengths[length_index]
+                    final_line = lines[line_index]
+
+        current_length = lengths[length_index]
+        current_line = lines[line_index]
+
+        target_x = line_positions[current_line]
+        target_y = length_positions[current_length]
+
+        screen.blit(pitch, (0, 0))
+        draw_target_circle(screen, target_x, target_y)
+        mouse_pos = pygame.mouse.get_pos()
+
+        for btn in buttons:
+            hovered = btn.is_clicked(mouse_pos)
+            btn.draw(screen, hovered)
+
+        pygame.display.update()
+        clock.tick(38)
+    """
 
 def double_one(screen, toss_result):
-    global line_index, length_index
+    global line_index, length_index, final_line, final_length
     # Setting up the new screen
     pygame.display.set_caption("Double Player - One Over")
     clock = pygame.time.Clock()
@@ -108,16 +204,20 @@ def double_one(screen, toss_result):
                 mouse_pos = pygame.mouse.get_pos()
 
                 if up_button.is_clicked(mouse_pos):
-                    length_index = min(3, length_index + 1)
+                    length_index = max(0, length_index - 1)
 
                 elif down_button.is_clicked(mouse_pos):
-                    length_index = max(0, length_index - 1)
+                    length_index = min(3, length_index + 1)
 
                 elif left_button.is_clicked(mouse_pos):
                     line_index = min(2, line_index + 1)
 
                 elif right_button.is_clicked(mouse_pos):
                     line_index = max(0, line_index - 1)
+
+                elif ok_button.is_clicked(mouse_pos):
+                    final_length = lengths[length_index]
+                    final_line = lines[line_index]
 
         current_length = lengths[length_index]
         current_line = lines[line_index]

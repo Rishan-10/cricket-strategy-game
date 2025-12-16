@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="07a9e0e9-f222-4f85-936c-adf8bba548b1" name="Changes" comment="Now the logic works properly, as now if the ball is a yorker the length is at yorker and same with line.">
+    <list default="true" id="07a9e0e9-f222-4f85-936c-adf8bba548b1" name="Changes" comment="Now the code is into the batting_first and bowling_first functions and the functions are being used in double_one function.">
       <change beforePath="$PROJECT_DIR$/double_player.py" beforeDir="false" afterPath="$PROJECT_DIR$/double_player.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -160,7 +160,15 @@
       <option name="project" value="LOCAL" />
       <updated>1765902595339</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Now the code is into the batting_first and bowling_first functions and the functions are being used in double_one function.">
+      <option name="closed" value="true" />
+      <created>1765902966201</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1765902966201</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -174,6 +182,18 @@
     <MESSAGE value="Fixed toss logic for double player." />
     <MESSAGE value="Added arrow buttons to move marker on pitch while bowling for double player mode." />
     <MESSAGE value="Now the logic works properly, as now if the ball is a yorker the length is at yorker and same with line." />
-    <option name="LAST_COMMIT_MESSAGE" value="Now the logic works properly, as now if the ball is a yorker the length is at yorker and same with line." />
+    <MESSAGE value="Now the code is into the batting_first and bowling_first functions and the functions are being used in double_one function." />
+    <option name="LAST_COMMIT_MESSAGE" value="Now the code is into the batting_first and bowling_first functions and the functions are being used in double_one function." />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/double_player.py</url>
+          <line>32</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

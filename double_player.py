@@ -79,11 +79,6 @@ selected_ball_type = ""
 # Background image
 pitch = pygame.image.load("pitch_background.png")
 
-# Different types of balls
-pace_balls = ["straight ball", "inswing", "outswing"]
-leg_spin_balls = ["leg spin", "googly", "arm ball"]
-off_spin_balls = ["off spin", "doosra", "arm ball"]
-
 # Different types of length and line
 lengths = ["yorker", "full", "good", "short"]
 lines = ["outside_leg", "stumps", "outside_off"]
@@ -113,7 +108,7 @@ line_positions = {
 outcomes = ["Dot Ball", "1 run", "2 runs", "3 runs", "4 runs", "6 runs", "Bowled out", "Caught out", "LBW", "Run out", "Wide", "No ball"]
 
 def batting_first(screen):
-    global line_index, length_index, final_line, final_length, choose_length_line, choose_ball_type, selected_ball_type, bowling_type
+    global line_index, length_index, final_line, final_length, choose_length_line, choose_ball_type, selected_ball_type, bowling_type, pace_buttons, leg_spin_buttons, off_spin_buttons
     running = True
     clock = pygame.time.Clock()
 
@@ -162,6 +157,36 @@ def batting_first(screen):
                     chosen_ball_type = False
                     print(selected_ball_type)
 
+            if event.type == pygame.MOUSEBUTTONDOWN and choose_ball_type and bowling_type == "leg_spin":
+                mouse_pos = pygame.mouse.get_pos()
+
+                if leg_spin.is_clicked(mouse_pos):
+                    selected_ball_type = "leg_spin"
+                elif googly.is_clicked(mouse_pos):
+                    selected_ball_type = "googly"
+                elif slider.is_clicked(mouse_pos):
+                    selected_ball_type = "slider"
+                elif top_spin.is_clicked(mouse_pos):
+                    selected_ball_type = "top_spin"
+                elif ok_button.is_clicked(mouse_pos):
+                    chosen_ball_type = False
+                    print(selected_ball_type)
+
+            if event.type == pygame.MOUSEBUTTONDOWN and choose_ball_type and bowling_type == "off_spin":
+                mouse_pos = pygame.mouse.get_pos()
+
+                if off_spin.is_clicked(mouse_pos):
+                    selected_ball_type = "off_spin"
+                elif doosra.is_clicked(mouse_pos):
+                    selected_ball_type = "doosra"
+                elif carrom.is_clicked(mouse_pos):
+                    selected_ball_type = "carrom"
+                elif arm_ball.is_clicked(mouse_pos):
+                    selected_ball_type = "arm_ball"
+                elif ok_button.is_clicked(mouse_pos):
+                    chosen_ball_type = False
+                    print(selected_ball_type)
+
         current_length = lengths[length_index]
         current_line = lines[line_index]
 
@@ -172,13 +197,21 @@ def batting_first(screen):
         draw_target_circle(screen, target_x, target_y)
         mouse_pos = pygame.mouse.get_pos()
 
+        if bowling_type == "pace":
+            bowling_type_buttons = pace_buttons
+        elif bowling_type == "leg_spin":
+            bowling_type_buttons = leg_spin_buttons
+        elif bowling_type == "off_spin":
+            bowling_type_buttons = off_spin_buttons
+
+
         if choose_length_line:
             for button in line_length_buttons:
                 hovered = button.is_clicked(mouse_pos)
                 button.draw(screen, hovered)
 
         if choose_ball_type:
-            for button in pace_buttons:
+            for button in bowling_type_buttons:
                 hovered = button.is_clicked(mouse_pos)
                 button.draw(screen, hovered)
 
@@ -190,6 +223,26 @@ def batting_first(screen):
             elif selected_ball_type == "out_swing":
                 pygame.draw.circle(screen, (235, 64, 52), (100, 500), 46, 4)
             elif selected_ball_type == "slower":
+                pygame.draw.circle(screen, (235, 64, 52), (100, 620), 46, 4)
+
+        if choose_ball_type and bowling_type == "leg_spin":
+            if selected_ball_type == "leg_spin":
+                pygame.draw.circle(screen, (235, 64, 52), (250, 500), 46, 4)
+            elif selected_ball_type == "googly":
+                pygame.draw.circle(screen, (235, 64, 52), (250, 620), 46, 4)
+            elif selected_ball_type == "top_spin":
+                pygame.draw.circle(screen, (235, 64, 52), (100, 500), 46, 4)
+            elif selected_ball_type == "slider":
+                pygame.draw.circle(screen, (235, 64, 52), (100, 620), 46, 4)
+
+        if choose_ball_type and bowling_type == "off_spin":
+            if selected_ball_type == "off_spin":
+                pygame.draw.circle(screen, (235, 64, 52), (250, 500), 46, 4)
+            elif selected_ball_type == "doosra":
+                pygame.draw.circle(screen, (235, 64, 52), (250, 620), 46, 4)
+            elif selected_ball_type == "carrom":
+                pygame.draw.circle(screen, (235, 64, 52), (100, 500), 46, 4)
+            elif selected_ball_type == "arm_ball":
                 pygame.draw.circle(screen, (235, 64, 52), (100, 620), 46, 4)
 
         pygame.display.update()
@@ -245,6 +298,36 @@ def bowling_first(screen):
                     chosen_ball_type = False
                     print(selected_ball_type)
 
+            if event.type == pygame.MOUSEBUTTONDOWN and choose_ball_type and bowling_type == "leg_spin":
+                mouse_pos = pygame.mouse.get_pos()
+
+                if leg_spin.is_clicked(mouse_pos):
+                    selected_ball_type = "leg_spin"
+                elif googly.is_clicked(mouse_pos):
+                    selected_ball_type = "googly"
+                elif slider.is_clicked(mouse_pos):
+                    selected_ball_type = "slider"
+                elif top_spin.is_clicked(mouse_pos):
+                    selected_ball_type = "top_spin"
+                elif ok_button.is_clicked(mouse_pos):
+                    chosen_ball_type = False
+                    print(selected_ball_type)
+
+            if event.type == pygame.MOUSEBUTTONDOWN and choose_ball_type and bowling_type == "off_spin":
+                mouse_pos = pygame.mouse.get_pos()
+
+                if off_spin.is_clicked(mouse_pos):
+                    selected_ball_type = "off_spin"
+                elif doosra.is_clicked(mouse_pos):
+                    selected_ball_type = "doosra"
+                elif carrom.is_clicked(mouse_pos):
+                    selected_ball_type = "carrom"
+                elif arm_ball.is_clicked(mouse_pos):
+                    selected_ball_type = "arm_ball"
+                elif ok_button.is_clicked(mouse_pos):
+                    chosen_ball_type = False
+                    print(selected_ball_type)
+
         current_length = lengths[length_index]
         current_line = lines[line_index]
 
@@ -255,13 +338,20 @@ def bowling_first(screen):
         draw_target_circle(screen, target_x, target_y)
         mouse_pos = pygame.mouse.get_pos()
 
+        if bowling_type == "pace":
+            bowling_type_buttons = pace_buttons
+        elif bowling_type == "leg_spin":
+            bowling_type_buttons = leg_spin_buttons
+        elif bowling_type == "off_spin":
+            bowling_type_buttons = off_spin_buttons
+
         if choose_length_line:
             for button in line_length_buttons:
                 hovered = button.is_clicked(mouse_pos)
                 button.draw(screen, hovered)
 
         if choose_ball_type:
-            for button in pace_buttons:
+            for button in bowling_type_buttons:
                 hovered = button.is_clicked(mouse_pos)
                 button.draw(screen, hovered)
 
@@ -273,6 +363,26 @@ def bowling_first(screen):
             elif selected_ball_type == "out_swing":
                 pygame.draw.circle(screen, (235, 64, 52), (100, 500), 46, 4)
             elif selected_ball_type == "slower":
+                pygame.draw.circle(screen, (235, 64, 52), (100, 620), 46, 4)
+
+        if choose_ball_type and bowling_type == "leg_spin":
+            if selected_ball_type == "leg_spin":
+                pygame.draw.circle(screen, (235, 64, 52), (250, 500), 46, 4)
+            elif selected_ball_type == "googly":
+                pygame.draw.circle(screen, (235, 64, 52), (250, 620), 46, 4)
+            elif selected_ball_type == "top_spin":
+                pygame.draw.circle(screen, (235, 64, 52), (100, 500), 46, 4)
+            elif selected_ball_type == "slider":
+                pygame.draw.circle(screen, (235, 64, 52), (100, 620), 46, 4)
+
+        if choose_ball_type and bowling_type == "off_spin":
+            if selected_ball_type == "off_spin":
+                pygame.draw.circle(screen, (235, 64, 52), (250, 500), 46, 4)
+            elif selected_ball_type == "doosra":
+                pygame.draw.circle(screen, (235, 64, 52), (250, 620), 46, 4)
+            elif selected_ball_type == "carrom":
+                pygame.draw.circle(screen, (235, 64, 52), (100, 500), 46, 4)
+            elif selected_ball_type == "arm_ball":
                 pygame.draw.circle(screen, (235, 64, 52), (100, 620), 46, 4)
 
         pygame.display.update()

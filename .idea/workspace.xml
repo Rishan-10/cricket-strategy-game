@@ -4,7 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="07a9e0e9-f222-4f85-936c-adf8bba548b1" name="Changes" comment="Created everything for leg spin and off spin bowling, now just selection is left.">
+    <list default="true" id="07a9e0e9-f222-4f85-936c-adf8bba548b1" name="Changes" comment="Selection of bowling type screen is created, but the choose bowling variation doesn't work.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/double_player.py" beforeDir="false" afterPath="$PROJECT_DIR$/double_player.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -48,7 +49,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Python.double_player.executor": "Debug",
+    "Python.double_player.executor": "Run",
     "Python.main.executor": "Run",
     "Python.single_player.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -184,7 +185,15 @@
       <option name="project" value="LOCAL" />
       <updated>1765991157115</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Selection of bowling type screen is created, but the choose bowling variation doesn't work.">
+      <option name="closed" value="true" />
+      <created>1765996891579</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1765996891579</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -201,6 +210,7 @@
     <MESSAGE value="Now the code is into the batting_first and bowling_first functions and the functions are being used in double_one function." />
     <MESSAGE value="Able to select different pace bowling types and the user's choice is now saved into a variable for future use." />
     <MESSAGE value="Created everything for leg spin and off spin bowling, now just selection is left." />
-    <option name="LAST_COMMIT_MESSAGE" value="Created everything for leg spin and off spin bowling, now just selection is left." />
+    <MESSAGE value="Selection of bowling type screen is created, but the choose bowling variation doesn't work." />
+    <option name="LAST_COMMIT_MESSAGE" value="Selection of bowling type screen is created, but the choose bowling variation doesn't work." />
   </component>
 </project>

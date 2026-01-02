@@ -95,7 +95,7 @@ ok_button_off_spin = CircleButton(1200, 560, 40, "OK")
 
 off_spin_buttons = [off_spin, doosra, carrom, arm_ball, ok_button_off_spin]
 
-# Game states
+# Bowling Game states
 choose_bowling_type = True
 choose_length_line = False
 choose_ball_type = False
@@ -109,11 +109,38 @@ bowling_type_buttons = [pace_button, leg_spin_button, off_spin_button]
 # Different types of shots
 front_foot_shots = ["forward defense", "sweep", "reverse sweep", "scoop", "cover drive", "straight drive", "flick shot"]
 back_foot_shots = ["backward defense", "pull shot", "backfoot punch", "square cut", "upper cut"]
+leave_shot = "leave"
 
-# Final choices of the user
+# Front Foot Shot Buttons
+forward_defence = CircleButton(350, 500, 40, "FORWARD DEFENSE")
+sweep = CircleButton(350, 620, 40, "SWEEP")
+scoop = CircleButton(150, 500, 40, "SCOOP")
+reverse_sweep = CircleButton(150, 620, 40, "REVERSE SWEEP")
+cover_drive = CircleButton(1100, 500, 40, "COVER DRIVE")
+straight_drive = CircleButton(1100, 620, 40, "STRAIGHT DRIVE")
+flick = CircleButton(1350, 500, 40, "FLICK")
+leave = CircleButton(1350, 620, 40, "LEAVE")
+
+frontfoot_shot_buttons = [forward_defence, sweep, reverse_sweep, scoop, cover_drive, straight_drive, flick, leave]
+
+# Back Foot Shot Buttons
+backward_defence = CircleButton(350, 380, 40, "BACKWARD DEFENSE")
+pull_shot = CircleButton(150, 380, 40, "PULL")
+upper_cut = CircleButton(1100, 380, 40, "UPPER CUT")
+square_cut = CircleButton(1350, 380, 40, "SQUARE CUT")
+
+backfoot_shot_buttons = [backward_defence, pull_shot, square_cut, upper_cut]
+
+# List with all the shots
+all_shots = [forward_defence, sweep, reverse_sweep, scoop, cover_drive, straight_drive, flick, leave, backward_defence, pull_shot, square_cut, upper_cut]
+
+# Bowling Final choices of the user
 final_length = ""
 final_line = ""
 selected_ball_variation = ""
+
+# Final batting shot chosen by user
+chosen_shot = ""
 
 # Background images
 pitch = pygame.image.load("pitch_background.png")
@@ -337,14 +364,17 @@ def bowling(bowler, screen):
             player_text = f"{bowler} bowling"
             player_surface = player_font.render(player_text, True, (255, 255, 255))
             screen.blit(player_surface, (0, 0))
+
+            pygame.display.update()
+            clock.tick(38)
         else:
+            pygame.display.update()
+            clock.tick(38)
+
             return
 
-        pygame.display.update()
-        clock.tick(38)
-
 def batting(batter, screen):
-    global front_foot_shots, back_foot_shots
+    global all_shots, chosen_shot
     running = True
     clock = pygame.time.Clock()
     show_batter = True
@@ -356,6 +386,23 @@ def batting(batter, screen):
                 pygame.quit()
                 exit()
                 running = False
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+
+                for button in all_shots:
+                    if button.is_clicked(mouse_pos):
+                        chosen_shot = button.text.lower()
+                        print(chosen_shot)
+                        running = False
+
+        screen.blit(pitch, (0, 0))
+
+        mouse_pos = pygame.mouse.get_pos()
+
+        for button in all_shots:
+            hovered = button.is_clicked(mouse_pos)
+            button.draw(screen, hovered)
 
         if show_batter:
             player_text = f"{batter} batting"

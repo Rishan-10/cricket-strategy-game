@@ -123,15 +123,11 @@ straight_drive = CircleButton(1100, 620, 40, "STRAIGHT DRIVE")
 flick = CircleButton(1350, 500, 40, "FLICK")
 leave = CircleButton(1350, 620, 40, "LEAVE")
 
-frontfoot_shot_buttons = [forward_defence, sweep, reverse_sweep, scoop, cover_drive, straight_drive, flick, leave]
-
 # Back Foot Shot Buttons
 backward_defence = CircleButton(350, 380, 40, "BACKWARD DEFENSE")
 pull_shot = CircleButton(150, 380, 40, "PULL")
 upper_cut = CircleButton(1100, 380, 40, "UPPER CUT")
 square_cut = CircleButton(1350, 380, 40, "SQUARE CUT")
-
-backfoot_shot_buttons = [backward_defence, pull_shot, square_cut, upper_cut]
 
 # List with all the shots
 all_shots = [forward_defence, sweep, reverse_sweep, scoop, cover_drive, straight_drive, flick, leave, backward_defence, pull_shot, square_cut, upper_cut]

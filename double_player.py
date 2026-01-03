@@ -182,6 +182,7 @@ wide_chance = {
     }
 }
 
+# Zones in which each shot is good
 good_shot_zones = {
     "cover_drive": {
         "full": ["outside_off"],

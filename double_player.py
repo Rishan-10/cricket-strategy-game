@@ -1,6 +1,8 @@
 # Imports
 from sys import exit
 import pygame
+import cv2
+import random
 
 pygame.init()
 pygame.font.init()
@@ -142,16 +144,108 @@ selected_ball_variation = ""
 # Final batting shot chosen by user
 chosen_shot = ""
 
+# Target circle coordinates
+target_x = 0
+target_y = 0
+
 # Background images
 pitch = pygame.image.load("pitch_background.png")
 blurred_pitch = pygame.image.load("blurred_pitch.png")
 
 # Different types of length and line
 lengths = ["yorker", "full", "good", "short"]
-lines = ["outside_leg", "stumps", "outside_off"]
+lines = ["leg_stump", "stumps", "outside_off"]
 
 length_index = 2
 line_index = 1
+
+# Bowling errors chances
+no_ball_chance = 2
+wide_chance = {
+    "outside_off": {
+        "short": 6,
+        "good": 4,
+        "full": 3,
+        "yorker": 2,
+    },
+    "leg_stump": {
+        "short": 7,
+        "good": 5,
+        "full": 4,
+        "yorker": 3,
+    },
+    "stumps": {
+        "short": 2,
+        "good": 1,
+        "full": 1,
+        "yorker": 0,
+    }
+}
+
+good_shot_zones = {
+    "cover_drive": {
+        "full": ["outside_off"],
+        "good": ["outside_off"],
+    },
+    "straight_drive": {
+        "full": ["stumps"],
+        "good": ["stumps"],
+    },
+    "flick_shot": {
+        "full": ["leg_stump", "stumps"],
+        "good": ["leg_stump", "stumps"],
+    },
+    "square_cut": {
+        "short": ["outside_off"],
+    },
+    "leave": {
+        "short": ["outside_off"],
+        "good": ["outside_off"],
+        "full": ["outside_off"],
+        "yorker": ["outside_off"],
+    },
+    "forward_defence": {
+        "good": ["stumps"],
+        "yorker": ["stumps"],
+    },
+    "backward_defence": {
+        "short": ["stumps"],
+        "good": ["stumps"],
+    },
+    "pull_shot": {
+        "short": ["stumps", "leg_stump"],
+    },
+    "upper_cut": {
+        "short": ["outside_off"],
+    },
+    "sweep": {
+        "good": ["stumps", "leg_stump"],
+        "full": ["stumps", "leg_stump"],
+    },
+    "reverse_sweep": {
+        "good": ["outside_off"],
+        "full": ["outside_off"],
+    },
+    "scoop": {
+        "full": ["stumps", "outside_off", "leg_stump"],
+        "yorker": ["stumps", "outside_off", "leg_stump"],
+    },
+}
+
+def check_bowling_error_chances(line, length):
+    global no_ball_chance, wide_chance
+
+    # Checking for no ball
+    if random.randint(1, 100) <= no_ball_chance:
+        return "no_ball"
+
+    # Checking for wide
+    current_wide_chance = wide_chance[line][length]
+    if random.randint(1, 100) <= current_wide_chance:
+        return "wide"
+
+    # Legal delivery has been bowled
+    return None
 
 # Draw circle to show where user is bowling
 def draw_target_circle(screen, x, y):
@@ -168,14 +262,14 @@ length_positions = {
 line_positions = {
     "outside_off": 550,
     "stumps": 715,
-    "outside_leg": 850
+    "leg_stump": 850
 }
 
 # Different types of outcomes
 outcomes = ["Dot Ball", "1 run", "2 runs", "3 runs", "4 runs", "6 runs", "Bowled out", "Caught out", "LBW", "Run out", "Wide", "No ball"]
 
 def bowling(bowler, screen):
-    global line_index, length_index, final_line, final_length, choose_length_line, choose_ball_type, selected_ball_variation, bowling_type, pace_buttons, leg_spin_buttons, off_spin_buttons, choose_bowling_type, bowling_type_buttons, title_font, player_font
+    global line_index, length_index, final_line, final_length, choose_length_line, choose_ball_type, selected_ball_variation, bowling_type, pace_buttons, leg_spin_buttons, off_spin_buttons, choose_bowling_type, bowling_type_buttons, title_font, player_font, target_y, target_x
     running = True
     clock = pygame.time.Clock()
     show_bowler = True
@@ -242,29 +336,27 @@ def bowling(bowler, screen):
 
                 if bowling_type == "pace":
                     if straight.is_clicked(mouse_pos):
-                        selected_ball_variation = "straight"
+                        selected_ball_variation = "Straight"
                     elif in_swing.is_clicked(mouse_pos):
-                        selected_ball_variation = "in_swing"
+                        selected_ball_variation = "In Swing"
                     elif out_swing.is_clicked(mouse_pos):
-                        selected_ball_variation = "out_swing"
+                        selected_ball_variation = "Out Swing"
                     elif slower.is_clicked(mouse_pos):
-                        selected_ball_variation = "slower"
+                        selected_ball_variation = "Slower"
                     elif ok_button_pace.is_clicked(mouse_pos):
-                        if selected_ball_variation == "":
-                            pass
-                        else:
+                        if selected_ball_variation != "":
                             choose_ball_type = False
                             show_bowler = False
 
                 elif bowling_type == "leg_spin":
                     if leg_spin.is_clicked(mouse_pos):
-                        selected_ball_variation = "leg_spin"
+                        selected_ball_variation = "Leg Spin"
                     elif googly.is_clicked(mouse_pos):
-                        selected_ball_variation = "googly"
+                        selected_ball_variation = "Googly"
                     elif slider.is_clicked(mouse_pos):
-                        selected_ball_variation = "slider"
+                        selected_ball_variation = "Slider"
                     elif top_spin.is_clicked(mouse_pos):
-                        selected_ball_variation = "top_spin"
+                        selected_ball_variation = "Top Spin"
                     elif ok_button_leg_spin.is_clicked(mouse_pos):
                         if selected_ball_variation == "":
                             pass
@@ -274,17 +366,15 @@ def bowling(bowler, screen):
 
                 elif bowling_type == "off_spin":
                     if off_spin.is_clicked(mouse_pos):
-                        selected_ball_variation = "off_spin"
+                        selected_ball_variation = "Off Spin"
                     elif doosra.is_clicked(mouse_pos):
-                        selected_ball_variation = "doosra"
+                        selected_ball_variation = "Doosra"
                     elif carrom.is_clicked(mouse_pos):
-                        selected_ball_variation = "carrom"
+                        selected_ball_variation = "Carrom"
                     elif arm_ball.is_clicked(mouse_pos):
-                        selected_ball_variation = "arm_ball"
+                        selected_ball_variation = "Arm Ball"
                     elif ok_button_off_spin.is_clicked(mouse_pos):
-                        if selected_ball_variation == "":
-                            pass
-                        else:
+                        if selected_ball_variation != "":
                             choose_ball_type = False
                             show_bowler = False
 
@@ -374,7 +464,7 @@ def bowling(bowler, screen):
             return
 
 def batting(batter, screen):
-    global all_shots, chosen_shot
+    global all_shots, chosen_shot, target_x, target_y, selected_ball_variation, player_font
     running = True
     clock = pygame.time.Clock()
     show_batter = True
@@ -398,6 +488,8 @@ def batting(batter, screen):
 
         screen.blit(pitch, (0, 0))
 
+        draw_target_circle(screen, target_x, target_y)
+
         mouse_pos = pygame.mouse.get_pos()
 
         for button in all_shots:
@@ -405,26 +497,51 @@ def batting(batter, screen):
             button.draw(screen, hovered)
 
         if show_batter:
+            player_font = pygame.font.SysFont(None, 50)
+
             player_text = f"{batter} batting"
             player_surface = player_font.render(player_text, True, (255, 255, 255))
             screen.blit(player_surface, (0, 0))
 
+            player_font = pygame.font.SysFont(None, 35)
+
+            ball_variation_text = f"Ball Variation: {selected_ball_variation}"
+            ball_variation_surface = player_font.render(ball_variation_text, True, (255, 255, 255))
+            screen.blit(ball_variation_surface, (0, 35))
+
         pygame.display.update()
         clock.tick(38)
 
-def show_outcome(outcome, screen):
+def show_error(error):
+    pass
+
+def show_outcome(line, length, ball_variation, shot, screen):
     pass
 
 def double_one(screen, toss_result):
+    global final_line, final_length, selected_ball_variation, chosen_shot
     # Setting up the new screen
     pygame.display.set_caption("Double Player - One Over")
 
     if toss_result == "bowl":
         bowling("Player 1", screen)
         batting("Player 2", screen)
+
+        error = check_bowling_error_chances(final_line, final_length)
+        if error == "wide" or error == "no_ball":
+            show_error(error)
+        else:
+            show_outcome(final_line, final_length, selected_ball_variation, chosen_shot, screen)
+
     elif toss_result == "bat":
         bowling("Player 2", screen)
         batting("Player 1", screen)
+
+        error = check_bowling_error_chances(final_line, final_length)
+        if error == "wide" or error == "no_ball":
+            show_error(error)
+        else:
+            show_outcome(final_line, final_length, selected_ball_variation, chosen_shot, screen)
 
 def double_two(screen, toss_result):
     pass

@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="07a9e0e9-f222-4f85-936c-adf8bba548b1" name="Changes" comment="Finished batting function = now when the player clicks a button to choose shot, the shot is saved to chosen_shot.">
+    <list default="true" id="07a9e0e9-f222-4f85-936c-adf8bba548b1" name="Changes" comment="Finished building chance for wide and no balls and started building the logic part for the outcome of the shot and ball by building zones in which each shot is good.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/double_player.py" beforeDir="false" afterPath="$PROJECT_DIR$/double_player.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -209,7 +208,23 @@
       <option name="project" value="LOCAL" />
       <updated>1767344755743</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="Finished building chance for wide and no balls and started building the logic part for the outcome of the shot and ball by building zones in which each shot is good.">
+      <option name="closed" value="true" />
+      <created>1767421388710</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1767421388710</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Finished building chance for wide and no balls and started building the logic part for the outcome of the shot and ball by building zones in which each shot is good.">
+      <option name="closed" value="true" />
+      <created>1767421433378</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1767421433378</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -229,6 +244,7 @@
     <MESSAGE value="Selection of bowling type screen is created, but the choose bowling variation doesn't work." />
     <MESSAGE value="Finished bowling function, and started batting function." />
     <MESSAGE value="Finished batting function = now when the player clicks a button to choose shot, the shot is saved to chosen_shot." />
-    <option name="LAST_COMMIT_MESSAGE" value="Finished batting function = now when the player clicks a button to choose shot, the shot is saved to chosen_shot." />
+    <MESSAGE value="Finished building chance for wide and no balls and started building the logic part for the outcome of the shot and ball by building zones in which each shot is good." />
+    <option name="LAST_COMMIT_MESSAGE" value="Finished building chance for wide and no balls and started building the logic part for the outcome of the shot and ball by building zones in which each shot is good." />
   </component>
 </project>

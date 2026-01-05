@@ -360,7 +360,7 @@ delete_label = settings.add.label("", font_size=25, font_color=(255, 0, 0))
 # Making a custom theme for my play menu
 play_custom_theme = pygame_menu.themes.THEME_DARK.copy()
 play_custom_theme.background_color = (0, 0, 0, 0)
-play_custom_theme.widget_font_size = 70
+play_custom_theme.widget_font_size = 64
 play_custom_theme.widget_padding = 25
 play_custom_theme.widget_margin = (0, 40)
 play_custom_theme.title_font_size = 90
@@ -378,7 +378,7 @@ mode_custom_theme.background_color = (0, 0, 0, 0)
 mode_custom_theme.widget_font_size = 70
 mode_custom_theme.widget_padding = 25
 mode_custom_theme.widget_margin = (0, 40)
-mode_custom_theme.title_font_size = 90
+mode_custom_theme.title_font_size = 84
 mode_custom_theme.title_bar_style = pygame_menu.widgets.MENUBAR_STYLE_SIMPLE
 mode_custom_theme.title_font_color = (255, 255, 255)
 
@@ -396,7 +396,7 @@ double_player.add.button('5 overs', double_five_overs)
 
 # Making a custom theme for toss menu
 toss_custom_theme = pygame_menu.themes.THEME_BLUE.copy()
-toss_custom_theme.widget_font_size = 70
+toss_custom_theme.widget_font_size = 68
 toss_custom_theme.widget_padding = 25
 toss_custom_theme.widget_margin = (0, 40)
 toss_custom_theme.title_font_size = 90

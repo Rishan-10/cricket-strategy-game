@@ -36,7 +36,7 @@ class CircleButton:
         self.y = y
         self.radius = radius
         self.text = text
-        self.font = pygame.font.SysFont(None, 36)
+        self.font = pygame.font.SysFont(None, 28)
 
     def draw(self, screen, hovered=False):
         pygame.draw.circle(screen, (30, 30, 30), (self.x, self.y), self.radius)

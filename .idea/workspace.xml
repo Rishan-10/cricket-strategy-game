@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="07a9e0e9-f222-4f85-936c-adf8bba548b1" name="Changes" comment="Finished building chance for wide and no balls and started building the logic part for the outcome of the shot and ball by building zones in which each shot is good.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="07a9e0e9-f222-4f85-936c-adf8bba548b1" name="Changes" comment="Added a function to check if the shot played is a good shot.">
       <change beforePath="$PROJECT_DIR$/double_player.py" beforeDir="false" afterPath="$PROJECT_DIR$/double_player.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -241,7 +241,15 @@
       <option name="project" value="LOCAL" />
       <updated>1767429078457</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="Added a function to check if the shot played is a good shot.">
+      <option name="closed" value="true" />
+      <created>1767597000674</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1767597000674</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -262,6 +270,7 @@
     <MESSAGE value="Finished bowling function, and started batting function." />
     <MESSAGE value="Finished batting function = now when the player clicks a button to choose shot, the shot is saved to chosen_shot." />
     <MESSAGE value="Finished building chance for wide and no balls and started building the logic part for the outcome of the shot and ball by building zones in which each shot is good." />
-    <option name="LAST_COMMIT_MESSAGE" value="Finished building chance for wide and no balls and started building the logic part for the outcome of the shot and ball by building zones in which each shot is good." />
+    <MESSAGE value="Added a function to check if the shot played is a good shot." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added a function to check if the shot played is a good shot." />
   </component>
 </project>

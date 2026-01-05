@@ -229,6 +229,13 @@ good_shot_zones = {
     },
 }
 
+def is_good_shot(shot, length, line):
+    return (
+        shot in good_shot_zones and
+        length in good_shot_zones[shot] and
+        line in good_shot_zones[shot][length]
+    )
+
 def check_bowling_error_chances(line, length):
     global no_ball_chance, wide_chance
 
@@ -512,8 +519,8 @@ def batting(batter, screen):
 def show_error(error):
     pass
 
-def show_outcome(line, length, ball_variation, shot, screen):
-    pass
+def show_outcome(line, length, shot, screen):
+    shot_choice = is_good_shot(shot, length, line)
 
 def double_one(screen, toss_result):
     global final_line, final_length, selected_ball_variation, chosen_shot
@@ -528,7 +535,7 @@ def double_one(screen, toss_result):
         if error == "wide" or error == "no_ball":
             show_error(error)
         else:
-            show_outcome(final_line, final_length, selected_ball_variation, chosen_shot, screen)
+            show_outcome(final_line, final_length, chosen_shot, screen)
 
     elif toss_result == "bat":
         bowling("Player 2", screen)
@@ -538,7 +545,7 @@ def double_one(screen, toss_result):
         if error == "wide" or error == "no_ball":
             show_error(error)
         else:
-            show_outcome(final_line, final_length, selected_ball_variation, chosen_shot, screen)
+            show_outcome(final_line, final_length, chosen_shot, screen)
 
 def double_two(screen, toss_result):
     pass

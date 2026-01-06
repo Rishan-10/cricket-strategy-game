@@ -1,6 +1,7 @@
 # Imports
 from sys import exit
 import pygame
+import random
 import cv2
 import random
 
@@ -107,11 +108,6 @@ leg_spin_button = RectButton(615, 445, 220, 70, "LEG SPIN")
 off_spin_button = RectButton(875, 445, 220, 70, "OFF SPIN")
 
 bowling_type_buttons = [pace_button, leg_spin_button, off_spin_button]
-
-# Different types of shots
-front_foot_shots = ["forward defense", "sweep", "reverse sweep", "scoop", "cover drive", "straight drive", "flick shot"]
-back_foot_shots = ["backward defense", "pull shot", "backfoot punch", "square cut", "upper cut"]
-leave_shot = "leave"
 
 # Front Foot Shot Buttons
 forward_defence = CircleButton(350, 500, 40, "FORWARD DEFENSE")
@@ -229,6 +225,164 @@ good_shot_zones = {
     },
 }
 
+fast_bowler_good = {
+    "cover_drive": {
+        "dot": 10,
+        "1": 20,
+        "2": 10,
+        "3": 2,
+        "4": 40,
+        "6": 2,
+        "bowled": 3,
+        "caught": 10,
+        "lbw": 1,
+        "run_out": 2,
+    },
+
+    "straight_drive": {
+        "dot": 8,
+        "1": 18,
+        "2": 8,
+        "3": 1,
+        "4": 50,
+        "6": 3,
+        "bowled": 2,
+        "caught": 8,
+        "lbw": 1,
+        "run_out": 1,
+    },
+
+    "flick_shot": {
+        "dot": 12,
+        "1": 25,
+        "2": 15,
+        "3": 5,
+        "4": 25,
+        "6": 3,
+        "bowled": 2,
+        "caught": 7,
+        "lbw": 3,
+        "run_out": 3,
+    },
+
+    "square_cut": {
+        "dot": 20,
+        "1": 25,
+        "2": 8,
+        "3": 1,
+        "4": 30,
+        "6": 2,
+        "bowled": 2,
+        "caught": 10,
+        "lbw": 1,
+        "run_out": 1,
+    },
+
+    "leave": {
+        "dot": 70,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "6": 0,
+        "bowled": 10,
+        "caught": 0,
+        "lbw": 20,
+        "run_out": 0,
+    },
+
+    "forward_defence": {
+        "dot": 65,
+        "1": 5,
+        "2": 1,
+        "3": 0,
+        "4": 10,
+        "6": 0,
+        "bowled": 8,
+        "caught": 3,
+        "lbw": 6,
+        "run_out": 2,
+    },
+
+    "backward_defence": {
+        "dot": 60,
+        "1": 8,
+        "2": 2,
+        "3": 0,
+        "4": 10,
+        "6": 0,
+        "bowled": 7,
+        "caught": 3,
+        "lbw": 7,
+        "run_out": 3,
+    },
+
+    "sweep": {
+        "dot": 12,
+        "1": 20,
+        "2": 10,
+        "3": 2,
+        "4": 35,
+        "6": 5,
+        "bowled": 2,
+        "caught": 10,
+        "lbw": 2,
+        "run_out": 2,
+    },
+
+    "reverse_sweep": {
+        "dot": 18,
+        "1": 15,
+        "2": 10,
+        "3": 2,
+        "4": 30,
+        "6": 5,
+        "bowled": 1,
+        "caught": 15,
+        "lbw": 2,
+        "run_out": 2,
+    },
+
+    "scoop": {
+        "dot": 10,
+        "1": 10,
+        "2": 8,
+        "3": 1,
+        "4": 20,
+        "6": 25,
+        "bowled": 2,
+        "caught": 15,
+        "lbw": 2,
+        "run_out": 7,
+    },
+
+    "pull_shot": {
+        "dot": 15,
+        "1": 20,
+        "2": 5,
+        "3": 0,
+        "4": 30,
+        "6": 15,
+        "bowled": 2,
+        "caught": 10,
+        "lbw": 1,
+        "run_out": 2,
+    },
+
+    "upper_cut": {
+        "dot": 20,
+        "1": 10,
+        "2": 5,
+        "3": 0,
+        "4": 25,
+        "6": 20,
+        "bowled": 3,
+        "caught": 15,
+        "lbw": 1,
+        "run_out": 1,
+    },
+}
+
 def is_good_shot(shot, length, line):
     return (
         shot in good_shot_zones and
@@ -270,23 +424,25 @@ line_positions = {
 }
 
 # Different types of outcomes
-outcomes = ["Dot Ball", "1 run", "2 runs", "3 runs", "4 runs", "6 runs", "Bowled out", "Caught out", "LBW", "Run out", "Wide", "No ball"]
+outcomes = [
+    "dot",
+    "1",
+    "2",
+    "3",
+    "4",
+    "6",
+    "bowled",
+    "caught",
+    "lbw",
+    "run_out"
+]
+def user_choose_ball_type(bowler, screen):
+    global bowling_type, title_font, player_font, bowling_type_buttons
 
-def bowling(bowler, screen):
-    global line_index, length_index, final_line, final_length, choose_length_line, choose_ball_type, selected_ball_variation, bowling_type, pace_buttons, leg_spin_buttons, off_spin_buttons, choose_bowling_type, bowling_type_buttons, title_font, player_font, target_y, target_x
     running = True
     clock = pygame.time.Clock()
     show_bowler = True
-
     bowling_type = ""
-    choose_bowling_type = True
-    choose_length_line = False
-    choose_ball_type = False
-    final_length = ""
-    final_line = ""
-    selected_ball_variation = ""
-    length_index = 2
-    line_index = 1
 
     while running:
         for event in pygame.event.get():
@@ -296,25 +452,62 @@ def bowling(bowler, screen):
                 exit()
                 running = False
 
-            if event.type == pygame.MOUSEBUTTONDOWN and choose_bowling_type:
+            if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
 
                 if pace_button.is_clicked(mouse_pos):
                     bowling_type = "pace"
-                    choose_length_line = True
-                    choose_bowling_type = False
+                    show_bowler = False
 
                 elif leg_spin_button.is_clicked(mouse_pos):
                     bowling_type = "leg_spin"
-                    choose_length_line = True
-                    choose_bowling_type = False
+                    show_bowler = False
 
                 elif off_spin_button.is_clicked(mouse_pos):
                     bowling_type = "off_spin"
-                    choose_length_line = True
-                    choose_bowling_type = False
+                    show_bowler = False
 
-            elif event.type == pygame.MOUSEBUTTONDOWN and choose_length_line:
+        mouse_pos = pygame.mouse.get_pos()
+
+        title_text = "What type of bowling do you want to do?"
+        title_surface = title_font.render(title_text, True, (255, 255, 255))
+        title_rect = title_surface.get_rect(center=(725, 400))
+        screen.blit(blurred_pitch, (0, 0))
+        screen.blit(title_surface, title_rect)
+
+        for button in bowling_type_buttons:
+            hovered = button.is_clicked(mouse_pos)
+            button.draw(screen, hovered)
+
+        if show_bowler:
+            player_text = f"{bowler} bowling"
+            player_surface = player_font.render(player_text, True, (255, 255, 255))
+            screen.blit(player_surface, (0, 0))
+
+            pygame.display.update()
+            clock.tick(38)
+        else:
+            pygame.display.update()
+            clock.tick(38)
+
+            return
+
+def user_choose_line_length(bowler, screen):
+    global line_index, length_index, final_line, final_length, target_y, target_x, player_font
+
+    running = True
+    clock = pygame.time.Clock()
+    show_bowler = True
+
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.mixer.music.stop()
+                pygame.quit()
+                exit()
+                running = False
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
 
                 if up_button.is_clicked(mouse_pos):
@@ -329,13 +522,55 @@ def bowling(bowler, screen):
                 elif right_button.is_clicked(mouse_pos):
                     line_index = max(0, line_index - 1)
 
-                elif ok_button_line_length.is_clicked(mouse_pos) and choose_length_line:
+                elif ok_button_line_length.is_clicked(mouse_pos):
                     final_length = lengths[length_index]
                     final_line = lines[line_index]
-                    choose_length_line = False
-                    choose_ball_type = True
+                    show_bowler = False
 
-            elif event.type == pygame.MOUSEBUTTONDOWN and choose_ball_type:
+        current_length = lengths[length_index]
+        current_line = lines[line_index]
+
+        target_x = line_positions[current_line]
+        target_y = length_positions[current_length]
+
+        screen.blit(pitch, (0, 0))
+        draw_target_circle(screen, target_x, target_y)
+
+        mouse_pos = pygame.mouse.get_pos()
+
+        for button in line_length_buttons:
+            hovered = button.is_clicked(mouse_pos)
+            button.draw(screen, hovered)
+
+        if show_bowler:
+            player_text = f"{bowler} bowling"
+            player_surface = player_font.render(player_text, True, (255, 255, 255))
+            screen.blit(player_surface, (0, 0))
+
+            pygame.display.update()
+            clock.tick(38)
+        else:
+            pygame.display.update()
+            clock.tick(38)
+
+            return
+
+def user_choose_ball_variation(bowler, screen):
+    global selected_ball_variation, bowling_type, pace_buttons, leg_spin_buttons, off_spin_buttons, player_font, target_y, target_x
+
+    running = True
+    clock = pygame.time.Clock()
+    show_bowler = True
+
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.mixer.music.stop()
+                pygame.quit()
+                exit()
+                running = False
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
 
                 if bowling_type == "pace":
@@ -349,7 +584,6 @@ def bowling(bowler, screen):
                         selected_ball_variation = "Slower"
                     elif ok_button_pace.is_clicked(mouse_pos):
                         if selected_ball_variation != "":
-                            choose_ball_type = False
                             show_bowler = False
 
                 elif bowling_type == "leg_spin":
@@ -362,10 +596,7 @@ def bowling(bowler, screen):
                     elif top_spin.is_clicked(mouse_pos):
                         selected_ball_variation = "Top Spin"
                     elif ok_button_leg_spin.is_clicked(mouse_pos):
-                        if selected_ball_variation == "":
-                            pass
-                        else:
-                            choose_ball_type = False
+                        if selected_ball_variation != "":
                             show_bowler = False
 
                 elif bowling_type == "off_spin":
@@ -379,79 +610,54 @@ def bowling(bowler, screen):
                         selected_ball_variation = "Arm Ball"
                     elif ok_button_off_spin.is_clicked(mouse_pos):
                         if selected_ball_variation != "":
-                            choose_ball_type = False
                             show_bowler = False
 
-        current_length = lengths[length_index]
-        current_line = lines[line_index]
-
-        target_x = line_positions[current_line]
-        target_y = length_positions[current_length]
-
-        if choose_bowling_type:
-            title_text = "What type of bowling do you want to do?"
-            title_surface = title_font.render(title_text, True, (255, 255, 255))
-            title_rect = title_surface.get_rect(center=(725, 400))
-            screen.blit(blurred_pitch, (0, 0))
-            screen.blit(title_surface, title_rect)
-        else:
-            screen.blit(pitch, (0, 0))
-            draw_target_circle(screen, target_x, target_y)
+        screen.blit(pitch, (0, 0))
+        draw_target_circle(screen, target_x, target_y)
 
         mouse_pos = pygame.mouse.get_pos()
 
-        if choose_bowling_type:
-            for button in bowling_type_buttons:
+        if bowling_type == "pace":
+            for button in pace_buttons:
+                hovered = button.is_clicked(mouse_pos)
+                button.draw(screen, hovered)
+        elif bowling_type == "leg_spin":
+            for button in leg_spin_buttons:
+                hovered = button.is_clicked(mouse_pos)
+                button.draw(screen, hovered)
+        elif bowling_type == "off_spin":
+            for button in off_spin_buttons:
                 hovered = button.is_clicked(mouse_pos)
                 button.draw(screen, hovered)
 
-        if choose_length_line:
-            for button in line_length_buttons:
-                hovered = button.is_clicked(mouse_pos)
-                button.draw(screen, hovered)
-
-        if choose_ball_type:
-            if bowling_type == "pace":
-                for button in pace_buttons:
-                    hovered = button.is_clicked(mouse_pos)
-                    button.draw(screen, hovered)
-            elif bowling_type == "leg_spin":
-                for button in leg_spin_buttons:
-                    hovered = button.is_clicked(mouse_pos)
-                    button.draw(screen, hovered)
-            elif bowling_type == "off_spin":
-                for button in off_spin_buttons:
-                    hovered = button.is_clicked(mouse_pos)
-                    button.draw(screen, hovered)
-
-        if choose_ball_type and bowling_type == "pace":
-            if selected_ball_variation == "straight":
+        if bowling_type == "pace":
+            if selected_ball_variation == "Straight":
                 pygame.draw.circle(screen, (235, 64, 52), (250, 500), 46, 4)
-            elif selected_ball_variation == "in_swing":
+            elif selected_ball_variation == "In Swing":
                 pygame.draw.circle(screen, (235, 64, 52), (250, 620), 46, 4)
-            elif selected_ball_variation == "out_swing":
+            elif selected_ball_variation == "Out Swing":
                 pygame.draw.circle(screen, (235, 64, 52), (100, 500), 46, 4)
-            elif selected_ball_variation == "slower":
+            elif selected_ball_variation == "Slower":
                 pygame.draw.circle(screen, (235, 64, 52), (100, 620), 46, 4)
 
-        if choose_ball_type and bowling_type == "leg_spin":
-            if selected_ball_variation == "leg_spin":
+        if bowling_type == "leg_spin":
+            if selected_ball_variation == "Leg Spin":
                 pygame.draw.circle(screen, (235, 64, 52), (250, 500), 46, 4)
-            elif selected_ball_variation == "googly":
+            elif selected_ball_variation == "Googly":
                 pygame.draw.circle(screen, (235, 64, 52), (250, 620), 46, 4)
-            elif selected_ball_variation == "top_spin":
+            elif selected_ball_variation == "Top Spin":
                 pygame.draw.circle(screen, (235, 64, 52), (100, 500), 46, 4)
-            elif selected_ball_variation == "slider":
+            elif selected_ball_variation == "Slider":
                 pygame.draw.circle(screen, (235, 64, 52), (100, 620), 46, 4)
 
-        if choose_ball_type and bowling_type == "off_spin":
-            if selected_ball_variation == "off_spin":
+        if bowling_type == "off_spin":
+            if selected_ball_variation == "Off Spin":
                 pygame.draw.circle(screen, (235, 64, 52), (250, 500), 46, 4)
-            elif selected_ball_variation == "doosra":
+            elif selected_ball_variation == "Doosra":
                 pygame.draw.circle(screen, (235, 64, 52), (250, 620), 46, 4)
-            elif selected_ball_variation == "carrom":
+            elif selected_ball_variation == "Carrom":
                 pygame.draw.circle(screen, (235, 64, 52), (100, 500), 46, 4)
-            elif selected_ball_variation == "arm_ball":
+            elif selected_ball_variation == "Arm Ball":
                 pygame.draw.circle(screen, (235, 64, 52), (100, 620), 46, 4)
 
         if show_bowler:
@@ -528,7 +734,9 @@ def double_one(screen, toss_result):
     pygame.display.set_caption("Double Player - One Over")
 
     if toss_result == "bowl":
-        bowling("Player 1", screen)
+        user_choose_ball_type("Player 1", screen)
+        user_choose_line_length("Player 1", screen)
+        user_choose_ball_variation("Player 1", screen)
         batting("Player 2", screen)
 
         error = check_bowling_error_chances(final_line, final_length)
@@ -538,7 +746,9 @@ def double_one(screen, toss_result):
             show_outcome(final_line, final_length, chosen_shot, screen)
 
     elif toss_result == "bat":
-        bowling("Player 2", screen)
+        user_choose_ball_type("Player 1", screen)
+        user_choose_line_length("Player 1", screen)
+        user_choose_ball_variation("Player 1", screen)
         batting("Player 1", screen)
 
         error = check_bowling_error_chances(final_line, final_length)

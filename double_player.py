@@ -3,7 +3,6 @@ from sys import exit
 import pygame
 import random
 import cv2
-import random
 
 pygame.init()
 pygame.font.init()
@@ -32,11 +31,12 @@ class RectButton:
         return self.rect.collidepoint(mouse_pos)
 
 class CircleButton:
-    def __init__(self, x, y, radius, text):
+    def __init__(self, x, y, radius, text, shot_id=None):
         self.x = x
         self.y = y
         self.radius = radius
         self.text = text
+        self.shot_id = shot_id
         self.font = pygame.font.SysFont(None, 28)
 
     def draw(self, screen, hovered=False):
@@ -110,20 +110,20 @@ off_spin_button = RectButton(875, 445, 220, 70, "OFF SPIN")
 bowling_type_buttons = [pace_button, leg_spin_button, off_spin_button]
 
 # Front Foot Shot Buttons
-forward_defence = CircleButton(350, 500, 40, "FORWARD DEFENSE")
-sweep = CircleButton(350, 620, 40, "SWEEP")
-scoop = CircleButton(150, 500, 40, "SCOOP")
-reverse_sweep = CircleButton(150, 620, 40, "REVERSE SWEEP")
-cover_drive = CircleButton(1100, 500, 40, "COVER DRIVE")
-straight_drive = CircleButton(1100, 620, 40, "STRAIGHT DRIVE")
-flick = CircleButton(1350, 500, 40, "FLICK")
-leave = CircleButton(1350, 620, 40, "LEAVE")
+forward_defence = CircleButton(350, 500, 40, "FORWARD DEFENSE", "forward_defence")
+sweep = CircleButton(350, 620, 40, "SWEEP", "sweep")
+scoop = CircleButton(150, 500, 40, "SCOOP", "scoop")
+reverse_sweep = CircleButton(150, 620, 40, "REVERSE SWEEP", "reverse_sweep")
+cover_drive = CircleButton(1100, 500, 40, "COVER DRIVE", "cover_drive")
+straight_drive = CircleButton(1100, 620, 40, "STRAIGHT DRIVE", "straight_drive")
+flick = CircleButton(1350, 500, 40, "FLICK", "flick_shot")
+leave = CircleButton(1350, 620, 40, "LEAVE", "leave")
 
 # Back Foot Shot Buttons
-backward_defence = CircleButton(350, 380, 40, "BACKWARD DEFENSE")
-pull_shot = CircleButton(150, 380, 40, "PULL")
-upper_cut = CircleButton(1100, 380, 40, "UPPER CUT")
-square_cut = CircleButton(1350, 380, 40, "SQUARE CUT")
+backward_defence = CircleButton(350, 380, 40, "BACKWARD DEFENSE", "backward_defence")
+pull_shot = CircleButton(150, 380, 40, "PULL", "pull_shot")
+upper_cut = CircleButton(1100, 380, 40, "UPPER CUT", "upper_cut")
+square_cut = CircleButton(1350, 380, 40, "SQUARE CUT", "square_cut")
 
 # List with all the shots
 all_shots = [forward_defence, sweep, reverse_sweep, scoop, cover_drive, straight_drive, flick, leave, backward_defence, pull_shot, square_cut, upper_cut]
@@ -225,161 +225,261 @@ good_shot_zones = {
     },
 }
 
+# Probabilities if good shots are chosen
 fast_bowler_good = {
-    "cover_drive": {
-        "dot": 10,
-        "1": 20,
-        "2": 10,
-        "3": 2,
-        "4": 40,
-        "6": 2,
-        "bowled": 3,
-        "caught": 10,
-        "lbw": 1,
-        "run_out": 2,
-    },
+    "cover_drive": {"dot":10,"1":20,"2":10,"3":2,"4":40,"6":2,"bowled":3,"caught":10,"lbw":1,"run_out":2},
+    "straight_drive": {"dot":8,"1":18,"2":8,"3":1,"4":50,"6":3,"bowled":2,"caught":8,"lbw":1,"run_out":1},
+    "flick_shot": {"dot":12,"1":25,"2":15,"3":5,"4":25,"6":3,"bowled":2,"caught":7,"lbw":3,"run_out":3},
+    "square_cut": {"dot":20,"1":25,"2":8,"3":1,"4":30,"6":2,"bowled":2,"caught":10,"lbw":1,"run_out":1},
+    "leave": {"dot":70,"1":0,"2":0,"3":0,"4":0,"6":0,"bowled":10,"caught":0,"lbw":20,"run_out":0},
+    "forward_defence": {"dot":65,"1":5,"2":1,"3":0,"4":10,"6":0,"bowled":8,"caught":3,"lbw":6,"run_out":2},
+    "backward_defence": {"dot":60,"1":8,"2":2,"3":0,"4":10,"6":0,"bowled":7,"caught":3,"lbw":7,"run_out":3},
+    "sweep": {"dot":12,"1":20,"2":10,"3":2,"4":35,"6":5,"bowled":2,"caught":10,"lbw":2,"run_out":2},
+    "reverse_sweep": {"dot":18,"1":15,"2":10,"3":2,"4":30,"6":5,"bowled":1,"caught":15,"lbw":2,"run_out":2},
+    "scoop": {"dot":10,"1":10,"2":8,"3":1,"4":20,"6":25,"bowled":2,"caught":15,"lbw":2,"run_out":7},
+    "pull_shot": {"dot":15,"1":20,"2":5,"3":0,"4":30,"6":15,"bowled":2,"caught":10,"lbw":1,"run_out":2},
+    "upper_cut": {"dot":20,"1":10,"2":5,"3":0,"4":25,"6":20,"bowled":3,"caught":15,"lbw":1,"run_out":1},
+}
 
-    "straight_drive": {
-        "dot": 8,
-        "1": 18,
-        "2": 8,
-        "3": 1,
-        "4": 50,
-        "6": 3,
-        "bowled": 2,
-        "caught": 8,
-        "lbw": 1,
-        "run_out": 1,
-    },
+leg_spinner_good = {
+    "cover_drive": {"dot":10,"1":25,"2":10,"3":2,"4":35,"6":5,"bowled":2,"caught":8,"lbw":2,"run_out":1},
+    "straight_drive": {"dot":8,"1":20,"2":8,"3":4,"4":40,"6":10,"bowled":1,"caught":5,"lbw":2,"run_out":2},
+    "flick_shot": {"dot":12,"1":20,"2":15,"3":3,"4":30,"6":8,"bowled":3,"caught":5,"lbw":3,"run_out":1},
+    "square_cut": {"dot":15,"1":25,"2":5,"3":1,"4":35,"6":7,"bowled":2,"caught":8,"lbw":1,"run_out":1},
+    "leave": {"dot":85,"1":0,"2":0,"3":0,"4":0,"6":0,"bowled":0,"caught":0,"lbw":15,"run_out":0},
+    "forward_defence": {"dot":70,"1":5,"2":0,"3":0,"4":10,"6":0,"bowled":5,"caught":2,"lbw":8,"run_out":0},
+    "backward_defence": {"dot":75,"1":5,"2":0,"3":0,"4":5,"6":0,"bowled":5,"caught":2,"lbw":8,"run_out":0},
+    "sweep": {"dot":15,"1":10,"2":5,"3":1,"4":20,"6":25,"bowled":2,"caught":15,"lbw":5,"run_out":2},
+    "reverse_sweep": {"dot":20,"1":5,"2":3,"3":0,"4":15,"6":35,"bowled":3,"caught":15,"lbw":2,"run_out":2},
+    "scoop": {"dot":25,"1":5,"2":3,"3":0,"4":10,"6":40,"bowled":2,"caught":12,"lbw":2,"run_out":1},
+    "pull_shot": {"dot":10,"1":15,"2":5,"3":1,"4":20,"6":35,"bowled":3,"caught":10,"lbw":0,"run_out":1},
+    "upper_cut": {"dot":15,"1":10,"2":4,"3":1,"4":10,"6":40,"bowled":3,"caught":15,"lbw":0,"run_out":2},
+}
 
-    "flick_shot": {
-        "dot": 12,
-        "1": 25,
-        "2": 15,
-        "3": 5,
-        "4": 25,
-        "6": 3,
-        "bowled": 2,
-        "caught": 7,
-        "lbw": 3,
-        "run_out": 3,
-    },
+off_spinner_good = {
+    "cover_drive": {"dot":12,"1":20,"2":10,"3":2,"4":38,"6":6,"bowled":2,"caught":8,"lbw":2,"run_out":2},
+    "straight_drive": {"dot":9,"1":22,"2":8,"3":3,"4":40,"6":8,"bowled":1,"caught":5,"lbw":1,"run_out":3},
+    "flick_shot": {"dot":15,"1":18,"2":12,"3":3,"4":30,"6":6,"bowled":3,"caught":4,"lbw":5,"run_out":4},
+    "square_cut": {"dot":18,"1":22,"2":5,"3":2,"4":32,"6":6,"bowled":3,"caught":8,"lbw":2,"run_out":2},
+    "leave": {"dot":90,"1":0,"2":0,"3":0,"4":0,"6":0,"bowled":0,"caught":0,"lbw":10,"run_out":0},
+    "forward_defence": {"dot":72,"1":4,"2":0,"3":0,"4":10,"6":0,"bowled":5,"caught":2,"lbw":6,"run_out":1},
+    "backward_defence": {"dot":74,"1":5,"2":0,"3":0,"4":8,"6":0,"bowled":5,"caught":2,"lbw":5,"run_out":1},
+    "sweep": {"dot":12,"1":12,"2":5,"3":1,"4":18,"6":26,"bowled":2,"caught":15,"lbw":6,"run_out":3},
+    "reverse_sweep": {"dot":16,"1":8,"2":2,"3":0,"4":14,"6":35,"bowled":3,"caught":17,"lbw":2,"run_out":3},
+    "scoop": {"dot":20,"1":8,"2":2,"3":0,"4":10,"6":38,"bowled":2,"caught":15,"lbw":2,"run_out":3},
+    "pull_shot": {"dot":12,"1":16,"2":6,"3":1,"4":18,"6":35,"bowled":3,"caught":7,"lbw":1,"run_out":1},
+    "upper_cut": {"dot":14,"1":12,"2":4,"3":1,"4":10,"6":40,"bowled":3,"caught":14,"lbw":1,"run_out":1},
+}
 
-    "square_cut": {
-        "dot": 20,
-        "1": 25,
-        "2": 8,
-        "3": 1,
-        "4": 30,
-        "6": 2,
-        "bowled": 2,
-        "caught": 10,
-        "lbw": 1,
-        "run_out": 1,
-    },
+# Probabilities if bad shots are chosen against pace bowler
+fast_bowler_bad_short = {
+    "cover_drive": {"dot":20,"1":10,"2":5,"3":0,"4":10,"6":2,"bowled":10,"caught":30,"lbw":10,"run_out":3},
+    "straight_drive": {"dot":18,"1":8,"2":4,"3":0,"4":8,"6":2,"bowled":15,"caught":30,"lbw":12,"run_out":3},
+    "flick_shot": {"dot":15,"1":12,"2":10,"3":3,"4":10,"6":5,"bowled":8,"caught":22,"lbw":10,"run_out":5},
+    "square_cut": {"dot":20,"1":15,"2":10,"3":2,"4":20,"6":5,"bowled":5,"caught":20,"lbw":1,"run_out":2},
+    "pull_shot": {"dot":15,"1":15,"2":5,"3":0,"4":25,"6":10,"bowled":5,"caught":20,"lbw":2,"run_out":3},
+    "upper_cut": {"dot":18,"1":10,"2":5,"3":0,"4":20,"6":15,"bowled":5,"caught":25,"lbw":1,"run_out":1},
+    "leave": {"dot":40,"1":0,"2":0,"3":0,"4":0,"6":0,"bowled":20,"caught":0,"lbw":35,"run_out":5},
+    "forward_defence": {"dot":35,"1":5,"2":0,"3":0,"4":5,"6":0,"bowled":25,"caught":10,"lbw":15,"run_out":5},
+    "backward_defence": {"dot":30,"1":8,"2":2,"3":0,"4":8,"6":0,"bowled":20,"caught":15,"lbw":12,"run_out":5},
+    "sweep": {"dot":20,"1":10,"2":5,"3":0,"4":15,"6":5,"bowled":10,"caught":25,"lbw":8,"run_out":2},
+    "reverse_sweep": {"dot":22,"1":10,"2":5,"3":0,"4":15,"6":6,"bowled":8,"caught":28,"lbw":4,"run_out":2},
+    "scoop": {"dot":15,"1":10,"2":5,"3":0,"4":10,"6":20,"bowled":10,"caught":25,"lbw":5,"run_out":5},
+}
 
-    "leave": {
-        "dot": 70,
-        "1": 0,
-        "2": 0,
-        "3": 0,
-        "4": 0,
-        "6": 0,
-        "bowled": 10,
-        "caught": 0,
-        "lbw": 20,
-        "run_out": 0,
-    },
+fast_bowler_bad_good = {
+    "cover_drive": {"dot":18,"1":10,"2":5,"3":1,"4":12,"6":2,"bowled":18,"caught":20,"lbw":12,"run_out":2},
+    "straight_drive": {"dot":20,"1":8,"2":4,"3":1,"4":10,"6":2,"bowled":22,"caught":15,"lbw":14,"run_out":4},
+    "flick_shot": {"dot":18,"1":10,"2":8,"3":3,"4":12,"6":5,"bowled":12,"caught":18,"lbw":10,"run_out":4},
+    "square_cut": {"dot":22,"1":15,"2":10,"3":2,"4":18,"6":4,"bowled":5,"caught":20,"lbw":2,"run_out":2},
+    "pull_shot": {"dot":18,"1":15,"2":5,"3":0,"4":22,"6":10,"bowled":5,"caught":20,"lbw":3,"run_out":2},
+    "upper_cut": {"dot":20,"1":10,"2":5,"3":0,"4":20,"6":15,"bowled":5,"caught":22,"lbw":2,"run_out":1},
+    "leave": {"dot":45,"1":0,"2":0,"3":0,"4":0,"6":0,"bowled":15,"caught":0,"lbw":35,"run_out":5},
+    "forward_defence": {"dot":40,"1":5,"2":1,"3":0,"4":5,"6":0,"bowled":20,"caught":8,"lbw":18,"run_out":3},
+    "backward_defence": {"dot":35,"1":8,"2":2,"3":0,"4":8,"6":0,"bowled":18,"caught":12,"lbw":15,"run_out":2},
+    "sweep": {"dot":18,"1":10,"2":5,"3":1,"4":15,"6":6,"bowled":10,"caught":22,"lbw":10,"run_out":3},
+    "reverse_sweep": {"dot":20,"1":10,"2":5,"3":1,"4":15,"6":6,"bowled":8,"caught":25,"lbw":7,"run_out":3},
+    "scoop": {"dot":15,"1":10,"2":5,"3":0,"4":10,"6":20,"bowled":10,"caught":25,"lbw":5,"run_out":5},
+}
 
-    "forward_defence": {
-        "dot": 65,
-        "1": 5,
-        "2": 1,
-        "3": 0,
-        "4": 10,
-        "6": 0,
-        "bowled": 8,
-        "caught": 3,
-        "lbw": 6,
-        "run_out": 2,
-    },
+fast_bowler_bad_full = {
+    "cover_drive": {"dot":20,"1":10,"2":3,"3":1,"4":15,"6":5,"bowled":15,"caught":20,"lbw":10,"run_out":1},
+    "straight_drive": {"dot":15,"1":12,"2":3,"3":1,"4":18,"6":4,"bowled":10,"caught":15,"lbw":10,"run_out":2},
+    "flick_shot": {"dot":20,"1":10,"2":5,"3":1,"4":10,"6":5,"bowled":10,"caught":10,"lbw":25,"run_out":4},
+    "square_cut": {"dot":35,"1":6,"2":1,"3":0,"4":10,"6":3,"bowled":10,"caught":30,"lbw":3,"run_out":2},
+    "leave": {"dot":15,"1":0,"2":0,"3":0,"4":0,"6":0,"bowled":20,"caught":0,"lbw":60,"run_out":5},
+    "forward_defence": {"dot":40,"1":4,"2":1,"3":0,"4":1,"6":0,"bowled":25,"caught":15,"lbw":12,"run_out":2},
+    "backward_defence": {"dot":45,"1":3,"2":0,"3":0,"4":1,"6":0,"bowled":30,"caught":10,"lbw":8,"run_out":3},
+    "sweep": {"dot":25,"1":6,"2":2,"3":1,"4":12,"6":5,"bowled":10,"caught":20,"lbw":15,"run_out":4},
+    "reverse_sweep": {"dot":20,"1":4,"2":1,"3":0,"4":10,"6":8,"bowled":15,"caught":30,"lbw":7,"run_out":5},
+    "scoop": {"dot":15,"1":5,"2":1,"3":0,"4":8,"6":10,"bowled":20,"caught":30,"lbw":6,"run_out":5},
+    "pull_shot": {"dot":40,"1":6,"2":1,"3":0,"4":10,"6":6,"bowled":10,"caught":20,"lbw":5,"run_out":2},
+    "upper_cut": {"dot":35,"1":5,"2":1,"3":0,"4":12,"6":10,"bowled":10,"caught":20,"lbw":5,"run_out":2},
+}
 
-    "backward_defence": {
-        "dot": 60,
-        "1": 8,
-        "2": 2,
-        "3": 0,
-        "4": 10,
-        "6": 0,
-        "bowled": 7,
-        "caught": 3,
-        "lbw": 7,
-        "run_out": 3,
-    },
+fast_bowler_bad_yorker = {
+    "cover_drive": {"dot":15,"1":5,"2":1,"3":0,"4":5,"6":1,"bowled":35,"caught":20,"lbw":10,"run_out":8},
+    "straight_drive": {"dot":20,"1":8,"2":2,"3":0,"4":6,"6":1,"bowled":30,"caught":15,"lbw":10,"run_out":8},
+    "flick_shot": {"dot":10,"1":15,"2":5,"3":2,"4":4,"6":1,"bowled":25,"caught":10,"lbw":20,"run_out":8},
+    "square_cut": {"dot":30,"1":10,"2":0,"3":0,"4":5,"6":1,"bowled":30,"caught":15,"lbw":5,"run_out":4},
+    "leave": {"dot":5,"1":0,"2":0,"3":0,"4":0,"6":0,"bowled":65,"caught":0,"lbw":30,"run_out":0},
+    "forward_defence": {"dot":10,"1":5,"2":0,"3":0,"4":0,"6":0,"bowled":50,"caught":5,"lbw":25,"run_out":5},
+    "backward_defence": {"dot":15,"1":3,"2":0,"3":0,"4":0,"6":0,"bowled":55,"caught":3,"lbw":20,"run_out":4},
+    "sweep": {"dot":20,"1":5,"2":1,"3":0,"4":3,"6":1,"bowled":25,"caught":30,"lbw":10,"run_out":5},
+    "reverse_sweep": {"dot":25,"1":3,"2":1,"3":0,"4":2,"6":1,"bowled":20,"caught":35,"lbw":10,"run_out":3},
+    "scoop": {"dot":30,"1":3,"2":2,"3":1,"4":3,"6":2,"bowled":10,"caught":40,"lbw":5,"run_out":4},
+    "pull_shot": {"dot":30,"1":5,"2":0,"3":0,"4":3,"6":2,"bowled":15,"caught":40,"lbw":2,"run_out":3},
+    "upper_cut": {"dot":35,"1":3,"2":0,"3":0,"4":3,"6":2,"bowled":15,"caught":35,"lbw":2,"run_out":5},
+}
 
-    "sweep": {
-        "dot": 12,
-        "1": 20,
-        "2": 10,
-        "3": 2,
-        "4": 35,
-        "6": 5,
-        "bowled": 2,
-        "caught": 10,
-        "lbw": 2,
-        "run_out": 2,
-    },
+# Probabilities if bad shots are chosen against leg spin bowler
+leg_spinner_bad_short = {
+    "cover_drive": {"dot":18,"1":12,"2":4,"3":0,"4":10,"6":3,"bowled":5,"caught":40,"lbw":5,"run_out":3},
+    "straight_drive": {"dot":20,"1":10,"2":3,"3":0,"4":8,"6":2,"bowled":8,"caught":42,"lbw":5,"run_out":2},
+    "flick_shot": {"dot":15,"1":12,"2":5,"3":0,"4":12,"6":6,"bowled":5,"caught":35,"lbw":7,"run_out":3},
+    "square_cut": {"dot":22,"1":15,"2":4,"3":0,"4":12,"6":4,"bowled":4,"caught":35,"lbw":2,"run_out":2},
+    "leave": {"dot":85,"1":0,"2":0,"3":0,"4":0,"6":0,"bowled":0,"caught":0,"lbw":15,"run_out":0},
+    "forward_defence": {"dot":50,"1":5,"2":0,"3":0,"4":6,"6":0,"bowled":18,"caught":6,"lbw":12,"run_out":3},
+    "backward_defence": {"dot":48,"1":6,"2":0,"3":0,"4":6,"6":0,"bowled":16,"caught":8,"lbw":13,"run_out":3},
+    "sweep": {"dot":15,"1":8,"2":3,"3":0,"4":10,"6":12,"bowled":6,"caught":35,"lbw":8,"run_out":3},
+    "reverse_sweep": {"dot":18,"1":6,"2":2,"3":0,"4":8,"6":15,"bowled":5,"caught":38,"lbw":6,"run_out":2},
+    "scoop": {"dot":20,"1":5,"2":2,"3":0,"4":6,"6":20,"bowled":4,"caught":38,"lbw":2,"run_out":3},
+    "pull_shot": {"dot":15,"1":10,"2":3,"3":0,"4":10,"6":20,"bowled":5,"caught":32,"lbw":3,"run_out":2},
+    "upper_cut": {"dot":18,"1":8,"2":2,"3":0,"4":8,"6":22,"bowled":4,"caught":35,"lbw":1,"run_out":2},
+}
 
-    "reverse_sweep": {
-        "dot": 18,
-        "1": 15,
-        "2": 10,
-        "3": 2,
-        "4": 30,
-        "6": 5,
-        "bowled": 1,
-        "caught": 15,
-        "lbw": 2,
-        "run_out": 2,
-    },
+leg_spinner_bad_good = {
+    "cover_drive": {"dot":28,"1":10,"2":3,"3":0,"4":6,"6":1,"bowled":20,"caught":22,"lbw":8,"run_out":2},
+    "straight_drive": {"dot":26,"1":8,"2":2,"3":0,"4":5,"6":1,"bowled":22,"caught":22,"lbw":12,"run_out":2},
+    "flick_shot": {"dot":22,"1":10,"2":3,"3":0,"4":6,"6":2,"bowled":18,"caught":24,"lbw":12,"run_out":3},
+    "square_cut": {"dot":30,"1":12,"2":3,"3":0,"4":6,"6":1,"bowled":15,"caught":28,"lbw":3,"run_out":2},
+    "leave": {"dot":90,"1":0,"2":0,"3":0,"4":0,"6":0,"bowled":0,"caught":0,"lbw":10,"run_out":0},
+    "forward_defence": {"dot":65,"1":3,"2":0,"3":0,"4":4,"6":0,"bowled":18,"caught":3,"lbw":6,"run_out":1},
+    "backward_defence": {"dot":60,"1":4,"2":0,"3":0,"4":4,"6":0,"bowled":20,"caught":4,"lbw":6,"run_out":2},
+    "sweep": {"dot":20,"1":8,"2":3,"3":0,"4":6,"6":5,"bowled":15,"caught":30,"lbw":11,"run_out":2},
+    "reverse_sweep": {"dot":22,"1":6,"2":2,"3":0,"4":6,"6":10,"bowled":12,"caught":34,"lbw":6,"run_out":2},
+    "scoop": {"dot":28,"1":5,"2":2,"3":0,"4":5,"6":15,"bowled":10,"caught":33,"lbw":1,"run_out":1},
+    "pull_shot": {"dot":22,"1":10,"2":3,"3":0,"4":8,"6":10,"bowled":12,"caught":30,"lbw":3,"run_out":2},
+    "upper_cut": {"dot":22,"1":8,"2":2,"3":0,"4":6,"6":15,"bowled":12,"caught":33,"lbw":1,"run_out":1},
+}
 
-    "scoop": {
-        "dot": 10,
-        "1": 10,
-        "2": 8,
-        "3": 1,
-        "4": 20,
-        "6": 25,
-        "bowled": 2,
-        "caught": 15,
-        "lbw": 2,
-        "run_out": 7,
-    },
+leg_spinner_bad_full = {
+    "cover_drive": {"dot":20,"1":10,"2":5,"3":1,"4":15,"6":2,"bowled":20,"caught":15,"lbw":10,"run_out":2},
+    "straight_drive": {"dot":15,"1":10,"2":5,"3":1,"4":20,"6":5,"bowled":25,"caught":10,"lbw":7,"run_out":2},
+    "flick_shot": {"dot":10,"1":15,"2":10,"3":2,"4":10,"6":3,"bowled":15,"caught":10,"lbw":20,"run_out":5},
+    "square_cut": {"dot":30,"1":5,"2":2,"3":0,"4":10,"6":2,"bowled":10,"caught":30,"lbw":5,"run_out":6},
+    "leave": {"dot":80,"1":0,"2":0,"3":0,"4":0,"6":0,"bowled":10,"caught":0,"lbw":10,"run_out":0},
+    "forward_defence": {"dot":50,"1":5,"2":0,"3":0,"4":2,"6":0,"bowled":20,"caught":5,"lbw":15,"run_out":3},
+    "backward_defence": {"dot":60,"1":5,"2":0,"3":0,"4":1,"6":0,"bowled":15,"caught":5,"lbw":10,"run_out":4},
+    "sweep": {"dot":15,"1":10,"2":5,"3":1,"4":10,"6":5,"bowled":10,"caught":20,"lbw":20,"run_out":4},
+    "reverse_sweep": {"dot":20,"1":5,"2":2,"3":0,"4":10,"6":5,"bowled":10,"caught":30,"lbw":10,"run_out":8},
+    "scoop": {"dot":10,"1":5,"2":2,"3":0,"4":5,"6":10,"bowled":15,"caught":35,"lbw":8,"run_out":10},
+    "pull_shot": {"dot":25,"1":10,"2":5,"3":1,"4":10,"6":5,"bowled":10,"caught":20,"lbw":5,"run_out":9},
+    "upper_cut": {"dot":30,"1":5,"2":2,"3":0,"4":10,"6":5,"bowled":10,"caught":30,"lbw":3,"run_out":5},
+}
 
-    "pull_shot": {
-        "dot": 15,
-        "1": 20,
-        "2": 5,
-        "3": 0,
-        "4": 30,
-        "6": 15,
-        "bowled": 2,
-        "caught": 10,
-        "lbw": 1,
-        "run_out": 2,
-    },
+leg_spinner_bad_yorker = {
+    "cover_drive": {"dot":30,"1":5,"2":0,"3":0,"4":10,"6":2,"bowled":15,"caught":23,"lbw":10,"run_out":5},
+    "straight_drive": {"dot":35,"1":5,"2":0,"3":0,"4":8,"6":1,"bowled":12,"caught":25,"lbw":12,"run_out":2},
+    "flick_shot": {"dot":25,"1":3,"2":0,"3":0,"4":5,"6":2,"bowled":20,"caught":25,"lbw":20,"run_out":0},
+    "square_cut": {"dot":20,"1":5,"2":0,"3":0,"4":12,"6":3,"bowled":18,"caught":30,"lbw":10,"run_out":2},
+    "leave": {"dot":60,"1":10,"2":0,"3":0,"4":0,"6":0,"bowled":10,"caught":0,"lbw":20,"run_out":0},
+    "forward_defence": {"dot":50,"1":10,"2":0,"3":0,"4":0,"6":0,"bowled":15,"caught":15,"lbw":10,"run_out":0},
+    "backward_defence": {"dot":55,"1":5,"2":0,"3":0,"4":0,"6":0,"bowled":15,"caught":10,"lbw":15,"run_out":0},
+    "sweep": {"dot":25,"1":3,"2":2,"3":0,"4":7,"6":0,"bowled":15,"caught":25,"lbw":15,"run_out":8},
+    "reverse_sweep": {"dot":20,"1":2,"2":0,"3":0,"4":5,"6":1,"bowled":25,"caught":30,"lbw":15,"run_out":2},
+    "scoop": {"dot":15,"1":3,"2":1,"3":0,"4":4,"6":8,"bowled":30,"caught":30,"lbw":8,"run_out":1},
+    "pull_shot": {"dot":35,"1":5,"2":2,"3":0,"4":5,"6":1,"bowled":12,"caught":25,"lbw":10,"run_out":5},
+    "upper_cut": {"dot":20,"1":3,"2":0,"3":0,"4":10,"6":3,"bowled":20,"caught":30,"lbw":10,"run_out":4},
+}
 
-    "upper_cut": {
-        "dot": 20,
-        "1": 10,
-        "2": 5,
-        "3": 0,
-        "4": 25,
-        "6": 20,
-        "bowled": 3,
-        "caught": 15,
-        "lbw": 1,
-        "run_out": 1,
+# Probabilities if bad shots are chosen against off spin bowler
+off_spinner_bad_short = {
+    "cover_drive": {"dot":20,"1":15,"2":5,"3":0,"4":10,"6":2,"bowled":8,"caught":35,"lbw":3,"run_out":2},
+    "straight_drive": {"dot":22,"1":12,"2":4,"3":0,"4":8,"6":2,"bowled":10,"caught":35,"lbw":5,"run_out":2},
+    "flick_shot": {"dot":18,"1":15,"2":6,"3":1,"4":12,"6":4,"bowled":6,"caught":30,"lbw":5,"run_out":3},
+    "square_cut": {"dot":25,"1":18,"2":5,"3":0,"4":10,"6":2,"bowled":5,"caught":32,"lbw":1,"run_out":2},
+    "leave": {"dot":85,"1":0,"2":0,"3":0,"4":0,"6":0,"bowled":0,"caught":0,"lbw":15,"run_out":0},
+    "forward_defence": {"dot":55,"1":5,"2":0,"3":0,"4":5,"6":0,"bowled":15,"caught":5,"lbw":12,"run_out":3},
+    "backward_defence": {"dot":50,"1":6,"2":0,"3":0,"4":6,"6":0,"bowled":14,"caught":8,"lbw":13,"run_out":3},
+    "sweep": {"dot":20,"1":10,"2":4,"3":0,"4":10,"6":8,"bowled":6,"caught":32,"lbw":7,"run_out":3},
+    "reverse_sweep": {"dot":25,"1":8,"2":2,"3":0,"4":8,"6":10,"bowled":5,"caught":35,"lbw":4,"run_out":3},
+    "scoop": {"dot":25,"1":5,"2":2,"3":0,"4":6,"6":15,"bowled":4,"caught":38,"lbw":2,"run_out":3},
+    "pull_shot": {"dot":18,"1":12,"2":4,"3":0,"4":10,"6":15,"bowled":6,"caught":30,"lbw":3,"run_out":2},
+    "upper_cut": {"dot":20,"1":8,"2":3,"3":0,"4":8,"6":20,"bowled":5,"caught":32,"lbw":2,"run_out":2},
+}
+
+off_spinner_bad_good = {
+    "cover_drive": {"dot":30,"1":12,"2":4,"3":0,"4":8,"6":1,"bowled":18,"caught":20,"lbw":5,"run_out":2},
+    "straight_drive": {"dot":28,"1":10,"2":3,"3":0,"4":6,"6":1,"bowled":20,"caught":20,"lbw":10,"run_out":2},
+    "flick_shot": {"dot":25,"1":12,"2":4,"3":0,"4":8,"6":2,"bowled":15,"caught":22,"lbw":10,"run_out":2},
+    "square_cut": {"dot":32,"1":14,"2":4,"3":0,"4":8,"6":1,"bowled":12,"caught":25,"lbw":2,"run_out":2},
+    "leave": {"dot":90,"1":0,"2":0,"3":0,"4":0,"6":0,"bowled":0,"caught":0,"lbw":10,"run_out":0},
+    "forward_defence": {"dot":65,"1":3,"2":0,"3":0,"4":4,"6":0,"bowled":15,"caught":3,"lbw":8,"run_out":2},
+    "backward_defence": {"dot":60,"1":4,"2":0,"3":0,"4":4,"6":0,"bowled":16,"caught":4,"lbw":10,"run_out":2},
+    "sweep": {"dot":22,"1":8,"2":3,"3":0,"4":8,"6":5,"bowled":12,"caught":30,"lbw":10,"run_out":2},
+    "reverse_sweep": {"dot":25,"1":6,"2":2,"3":0,"4":6,"6":10,"bowled":10,"caught":33,"lbw":6,"run_out":2},
+    "scoop": {"dot":30,"1":5,"2":2,"3":0,"4":5,"6":15,"bowled":8,"caught":33,"lbw":1,"run_out":1},
+    "pull_shot": {"dot":25,"1":10,"2":4,"3":0,"4":10,"6":10,"bowled":10,"caught":26,"lbw":3,"run_out":2},
+    "upper_cut": {"dot":25,"1":8,"2":2,"3":0,"4":8,"6":15,"bowled":10,"caught":30,"lbw":1,"run_out":1},
+}
+
+off_spinner_bad_full = {
+    "cover_drive": {"dot":20,"1":10,"2":5,"3":1,"4":15,"6":2,"bowled":20,"caught":15,"lbw":10,"run_out":2},
+    "straight_drive": {"dot":15,"1":10,"2":5,"3":1,"4":20,"6":5,"bowled":25,"caught":10,"lbw":7,"run_out":2},
+    "flick_shot": {"dot":15,"1":15,"2":10,"3":2,"4":10,"6":3,"bowled":15,"caught":10,"lbw":15,"run_out":5},
+    "backfoot_punch": {"dot":25,"1":10,"2":5,"3":1,"4":10,"6":1,"bowled":15,"caught":20,"lbw":10,"run_out":3},
+    "square_cut": {"dot":30,"1":5,"2":2,"3":0,"4":10,"6":2,"bowled":10,"caught":30,"lbw":5,"run_out":6},
+    "leave": {"dot":80,"1":0,"2":0,"3":0,"4":0,"6":0,"bowled":10,"caught":0,"lbw":10,"run_out":0},
+    "forward_defence": {"dot":50,"1":5,"2":0,"3":0,"4":2,"6":0,"bowled":20,"caught":5,"lbw":15,"run_out":3},
+    "backward_defence": {"dot":60,"1":5,"2":0,"3":0,"4":1,"6":0,"bowled":15,"caught":5,"lbw":10,"run_out":4},
+    "sweep": {"dot":12,"1":12,"2":5,"3":1,"4":10,"6":6,"bowled":10,"caught":20,"lbw":20,"run_out":4},
+    "reverse_sweep": {"dot":16,"1":8,"2":2,"3":0,"4":10,"6":6,"bowled":10,"caught":30,"lbw":10,"run_out":8},
+    "scoop": {"dot":10,"1":5,"2":2,"3":0,"4":5,"6":10,"bowled":15,"caught":35,"lbw":8,"run_out":10},
+    "pull_shot": {"dot":25,"1":10,"2":5,"3":1,"4":10,"6":5,"bowled":10,"caught":20,"lbw":5,"run_out":9},
+    "upper_cut": {"dot":30,"1":5,"2":2,"3":0,"4":10,"6":5,"bowled":10,"caught":30,"lbw":3,"run_out":5},
+}
+
+off_spinner_bad_yorker = {
+    "cover_drive": {"dot":30,"1":5,"2":0,"3":0,"4":10,"6":2,"bowled":15,"caught":23,"lbw":10,"run_out":5},
+    "straight_drive": {"dot":35,"1":5,"2":0,"3":0,"4":8,"6":1,"bowled":12,"caught":25,"lbw":12,"run_out":2},
+    "flick_shot": {"dot":25,"1":3,"2":0,"3":0,"4":5,"6":2,"bowled":20,"caught":25,"lbw":20,"run_out":0},
+    "square_cut": {"dot":20,"1":5,"2":0,"3":0,"4":12,"6":3,"bowled":18,"caught":30,"lbw":10,"run_out":2},
+    "leave": {"dot":60,"1":10,"2":0,"3":0,"4":0,"6":0,"bowled":10,"caught":0,"lbw":20,"run_out":0},
+    "forward_defence": {"dot":50,"1":10,"2":0,"3":0,"4":0,"6":0,"bowled":15,"caught":15,"lbw":10,"run_out":0},
+    "backward_defence": {"dot":55,"1":5,"2":0,"3":0,"4":0,"6":0,"bowled":15,"caught":10,"lbw":15,"run_out":0},
+    "sweep": {"dot":25,"1":3,"2":2,"3":0,"4":7,"6":0,"bowled":15,"caught":25,"lbw":15,"run_out":8},
+    "reverse_sweep": {"dot":20,"1":2,"2":0,"3":0,"4":5,"6":1,"bowled":25,"caught":30,"lbw":15,"run_out":2},
+    "scoop": {"dot":15,"1":3,"2":1,"3":0,"4":4,"6":8,"bowled":30,"caught":30,"lbw":8,"run_out":1},
+    "pull_shot": {"dot":35,"1":5,"2":2,"3":0,"4":5,"6":1,"bowled":12,"caught":25,"lbw":10,"run_out":5},
+    "upper_cut": {"dot":20,"1":3,"2":0,"3":0,"4":10,"6":3,"bowled":20,"caught":30,"lbw":10,"run_out":4},
+}
+
+# tables:
+GOOD_TABLES = {
+    "pace": fast_bowler_good,
+    "leg_spin": leg_spinner_good,
+    "off_spin": off_spinner_good,
+}
+
+BAD_TABLES = {
+    "pace": {
+        "yorker": fast_bowler_bad_yorker,
+        "full": fast_bowler_bad_full,
+        "good": fast_bowler_bad_good,
+        "short": fast_bowler_bad_short,
+    },
+    "leg_spin": {
+        "yorker": leg_spinner_bad_yorker,
+        "full": leg_spinner_bad_full,
+        "good": leg_spinner_bad_good,
+        "short": leg_spinner_bad_short,
+    },
+    "off_spin": {
+        "yorker": off_spinner_bad_yorker,
+        "full": off_spinner_bad_full,
+        "good": off_spinner_bad_good,
+        "short": off_spinner_bad_short,
     },
 }
 
@@ -424,7 +524,7 @@ line_positions = {
 }
 
 # Different types of outcomes
-outcomes = [
+outcome_possibilities = [
     "dot",
     "1",
     "2",
@@ -436,6 +536,7 @@ outcomes = [
     "lbw",
     "run_out"
 ]
+
 def user_choose_ball_type(bowler, screen):
     global bowling_type, title_font, player_font, bowling_type_buttons
 
@@ -692,8 +793,7 @@ def batting(batter, screen):
 
                 for button in all_shots:
                     if button.is_clicked(mouse_pos):
-                        chosen_shot = button.text.lower()
-                        print(chosen_shot)
+                        chosen_shot = button.shot_id
                         running = False
 
         screen.blit(pitch, (0, 0))
@@ -723,10 +823,27 @@ def batting(batter, screen):
         clock.tick(38)
 
 def show_error(error):
-    pass
+    if error == "wide":
+        print("Wide")
+    elif error == "no_ball":
+        print("No Ball")
 
-def show_outcome(line, length, shot, screen):
-    shot_choice = is_good_shot(shot, length, line)
+def get_outcome_table(bowl_type, is_good, length):
+    """
+    bowling_type: 'pace', 'leg_spin', 'off_spin'
+    shot_quality: 'good' or 'bad'
+    length: 'yorker', 'full', 'good', 'short'
+    """
+
+    if is_good:
+        return GOOD_TABLES[bowl_type]
+    else:
+        return BAD_TABLES[bowl_type][length]
+
+def pick_outcome(probabilities):
+    outcomes = list(probabilities.keys())
+    weights = list(probabilities.values())
+    return random.choices(outcomes, weights=weights, k=1)[0]
 
 def double_one(screen, toss_result):
     global final_line, final_length, selected_ball_variation, chosen_shot
@@ -743,21 +860,26 @@ def double_one(screen, toss_result):
         if error == "wide" or error == "no_ball":
             show_error(error)
         else:
-            show_outcome(final_line, final_length, chosen_shot, screen)
+            table = get_outcome_table(bowling_type, is_good_shot(chosen_shot, final_length, final_line), final_length)
+            outcome = pick_outcome(table[chosen_shot])
+            print(outcome)
 
     elif toss_result == "bat":
-        user_choose_ball_type("Player 1", screen)
-        user_choose_line_length("Player 1", screen)
-        user_choose_ball_variation("Player 1", screen)
+        user_choose_ball_type("Player 2", screen)
+        user_choose_line_length("Player 2", screen)
+        user_choose_ball_variation("Player 2", screen)
         batting("Player 1", screen)
 
         error = check_bowling_error_chances(final_line, final_length)
         if error == "wide" or error == "no_ball":
             show_error(error)
         else:
-            show_outcome(final_line, final_length, chosen_shot, screen)
+            table = get_outcome_table(bowling_type, is_good_shot(chosen_shot, final_length, final_line), final_length)
+            outcome = pick_outcome(table[chosen_shot])
+            print(outcome)
 
 def double_two(screen, toss_result):
     pass
+
 def double_five(screen, toss_result):
     pass

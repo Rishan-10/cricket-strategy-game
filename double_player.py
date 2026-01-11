@@ -3,6 +3,7 @@ from sys import exit
 import pygame
 import random
 import cv2
+from pause import PauseMenu
 
 pygame.init()
 pygame.font.init()
@@ -74,6 +75,15 @@ caught = cv2.VideoCapture("outcome_videos/CaughtOut.mov")
 lbw = cv2.VideoCapture("outcome_videos/LBW.mov")
 run_out = cv2.VideoCapture("outcome_videos/RunOut.mov")
 
+# To track all the balls
+ball_log = []
+
+# Pause button image
+pause_button = pygame.image.load("menu/pause.png")
+pause_button_rect = pause_button.get_rect(topleft=(1390, 10))
+
+paused = False
+
 # Chosen bowling type
 bowling_type = ""
 
@@ -133,11 +143,6 @@ arm_ball = CircleButton(100, 620, 40, "ARM BALL")
 ok_button_off_spin = CircleButton(1200, 560, 40, "OK")
 
 off_spin_buttons = [off_spin, doosra, carrom, arm_ball, ok_button_off_spin]
-
-# Bowling Game states
-choose_bowling_type = True
-choose_length_line = False
-choose_ball_type = False
 
 pace_button = RectButton(335, 445, 220, 70, "PACE")
 leg_spin_button = RectButton(615, 445, 220, 70, "LEG SPIN")
@@ -541,6 +546,17 @@ def draw_target_circle(screen, x, y):
     # Outer glow
     pygame.draw.circle(screen, (0, 135, 245), (x, y), 80, 10)
 
+def handle_pause(pause_menu):
+    global paused
+    while paused:
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+        pause_menu.update_and_draw(events)
+        pygame.display.update()
+
 length_positions = {
     "short": 620,
     "good": 540,
@@ -569,15 +585,23 @@ outcome_possibilities = [
 ]
 
 def user_choose_ball_type(bowler, screen):
-    global bowling_type, title_font, player_font, bowling_type_buttons
+    global bowling_type, title_font, player_font, bowling_type_buttons, paused
 
     running = True
     clock = pygame.time.Clock()
     show_bowler = True
     bowling_type = ""
 
+    def resume_game():
+        global paused
+        paused = False
+        pause_menu.close()
+
+    pause_menu = PauseMenu(screen, on_resume=resume_game)
+
     while running:
-        for event in pygame.event.get():
+        events = pygame.event.get()
+        for event in events:
             if event.type == pygame.QUIT:
                 pygame.mixer.music.stop()
                 pygame.quit()
@@ -599,6 +623,19 @@ def user_choose_ball_type(bowler, screen):
                     bowling_type = "off_spin"
                     show_bowler = False
 
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if pause_button_rect.collidepoint(event.pos):
+                    screen.blit(blurred_pitch, (0, 0))
+
+                    overlay = pygame.Surface((1450, 890))
+                    overlay.set_alpha(100)
+                    overlay.fill((0, 0, 0))
+                    screen.blit(overlay, (0, 0))
+
+                    paused = True
+                    pause_menu.open()
+                    handle_pause(pause_menu)
+
         mouse_pos = pygame.mouse.get_pos()
 
         title_text = "What type of bowling do you want to do?"
@@ -606,6 +643,8 @@ def user_choose_ball_type(bowler, screen):
         title_rect = title_surface.get_rect(center=(725, 400))
         screen.blit(blurred_pitch, (0, 0))
         screen.blit(title_surface, title_rect)
+
+        screen.blit(pause_button, pause_button_rect)
 
         for button in bowling_type_buttons:
             hovered = button.is_clicked(mouse_pos)
@@ -616,23 +655,37 @@ def user_choose_ball_type(bowler, screen):
             player_surface = player_font.render(player_text, True, (255, 255, 255))
             screen.blit(player_surface, (0, 0))
 
+            pause_menu.update_and_draw(events)
             pygame.display.update()
             clock.tick(38)
         else:
+            pause_menu.update_and_draw(events)
             pygame.display.update()
             clock.tick(38)
 
             return
 
-def user_choose_line_length(bowler, screen):
-    global line_index, length_index, final_line, final_length, target_y, target_x, player_font
+def user_choose_line_length(bowler, batter, screen):
+    global line_index, length_index, final_line, final_length, target_y, target_x, player_font, paused
 
     running = True
     clock = pygame.time.Clock()
     show_bowler = True
+    line_index = 1
+    length_index = 2
+    final_line = ""
+    final_length = ""
+
+    def resume_game():
+        global paused
+        paused = False
+        pause_menu.close()
+
+    pause_menu = PauseMenu(screen, on_resume=resume_game)
 
     while running:
-        for event in pygame.event.get():
+        events = pygame.event.get()
+        for event in events:
             if event.type == pygame.QUIT:
                 pygame.mixer.music.stop()
                 pygame.quit()
@@ -659,6 +712,20 @@ def user_choose_line_length(bowler, screen):
                     final_line = lines[line_index]
                     show_bowler = False
 
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if pause_button_rect.collidepoint(event.pos):
+                    screen.blit(blurred_pitch, (0, 0))
+
+                    overlay = pygame.Surface((1450, 890))
+                    overlay.set_alpha(100)
+                    overlay.fill((0, 0, 0))
+                    screen.blit(overlay, (0, 0))
+
+                    paused = True
+                    pause_menu.open()
+                    handle_pause(pause_menu)
+
+        handle_pause(pause_menu)
         current_length = lengths[length_index]
         current_line = lines[line_index]
 
@@ -666,7 +733,8 @@ def user_choose_line_length(bowler, screen):
         target_y = length_positions[current_length]
 
         screen.blit(pitch, (0, 0))
-        draw_scoreboard(screen)
+        screen.blit(pause_button, pause_button_rect)
+        draw_scoreboard(screen, batter)
         draw_target_circle(screen, target_x, target_y)
 
         mouse_pos = pygame.mouse.get_pos()
@@ -680,23 +748,34 @@ def user_choose_line_length(bowler, screen):
             player_surface = player_font.render(player_text, True, (255, 255, 255))
             screen.blit(player_surface, (0, 0))
 
+            pause_menu.update_and_draw(events)
             pygame.display.update()
             clock.tick(38)
         else:
+            pause_menu.update_and_draw(events)
             pygame.display.update()
             clock.tick(38)
 
             return
 
-def user_choose_ball_variation(bowler, screen):
-    global selected_ball_variation, bowling_type, pace_buttons, leg_spin_buttons, off_spin_buttons, player_font, target_y, target_x
+def user_choose_ball_variation(bowler, batter, screen):
+    global selected_ball_variation, bowling_type, pace_buttons, leg_spin_buttons, off_spin_buttons, player_font, target_y, target_x, paused
 
     running = True
     clock = pygame.time.Clock()
     show_bowler = True
+    selected_ball_variation = ""
+
+    def resume_game():
+        global paused
+        paused = False
+        pause_menu.close()
+
+    pause_menu = PauseMenu(screen, on_resume=resume_game)
 
     while running:
-        for event in pygame.event.get():
+        events = pygame.event.get()
+        for event in events:
             if event.type == pygame.QUIT:
                 pygame.mixer.music.stop()
                 pygame.quit()
@@ -745,8 +824,22 @@ def user_choose_ball_variation(bowler, screen):
                         if selected_ball_variation != "":
                             show_bowler = False
 
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if pause_button_rect.collidepoint(event.pos):
+                    screen.blit(blurred_pitch, (0, 0))
+
+                    overlay = pygame.Surface((1450, 890))
+                    overlay.set_alpha(100)
+                    overlay.fill((0, 0, 0))
+                    screen.blit(overlay, (0, 0))
+
+                    paused = True
+                    pause_menu.open()
+                    handle_pause(pause_menu)
+
         screen.blit(pitch, (0, 0))
-        draw_scoreboard(screen)
+        screen.blit(pause_button, pause_button_rect)
+        draw_scoreboard(screen, batter)
         draw_target_circle(screen, target_x, target_y)
 
         mouse_pos = pygame.mouse.get_pos()
@@ -799,22 +892,32 @@ def user_choose_ball_variation(bowler, screen):
             player_surface = player_font.render(player_text, True, (255, 255, 255))
             screen.blit(player_surface, (0, 0))
 
+            pause_menu.update_and_draw(events)
             pygame.display.update()
             clock.tick(38)
         else:
+            pause_menu.update_and_draw(events)
             pygame.display.update()
             clock.tick(38)
 
             return
 
 def batting(batter, screen):
-    global all_shots, chosen_shot, target_x, target_y, selected_ball_variation, player_font
+    global all_shots, chosen_shot, target_x, target_y, selected_ball_variation, player_font, paused
     running = True
     clock = pygame.time.Clock()
     show_batter = True
 
+    def resume_game():
+        global paused
+        paused = False
+        pause_menu.close()
+
+    pause_menu = PauseMenu(screen, on_resume=resume_game)
+
     while running:
-        for event in pygame.event.get():
+        events = pygame.event.get()
+        for event in events:
             if event.type == pygame.QUIT:
                 pygame.mixer.music.stop()
                 pygame.quit()
@@ -829,8 +932,22 @@ def batting(batter, screen):
                         chosen_shot = button.shot_id
                         running = False
 
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if pause_button_rect.collidepoint(event.pos):
+                    screen.blit(blurred_pitch, (0, 0))
+
+                    overlay = pygame.Surface((1450, 890))
+                    overlay.set_alpha(100)
+                    overlay.fill((0, 0, 0))
+                    screen.blit(overlay, (0, 0))
+
+                    paused = True
+                    pause_menu.open()
+                    handle_pause(pause_menu)
+
         screen.blit(pitch, (0, 0))
-        draw_scoreboard(screen)
+        screen.blit(pause_button, pause_button_rect)
+        draw_scoreboard(screen, batter)
         draw_target_circle(screen, target_x, target_y)
 
         mouse_pos = pygame.mouse.get_pos()
@@ -852,6 +969,7 @@ def batting(batter, screen):
             ball_variation_surface = player_font.render(ball_variation_text, True, (255, 255, 255))
             screen.blit(ball_variation_surface, (0, 35))
 
+        pause_menu.update_and_draw(events)
         pygame.display.update()
         clock.tick(38)
 
@@ -875,59 +993,97 @@ def pick_outcome(probabilities):
     weights = list(probabilities.values())
     return random.choices(outcomes, weights=weights, k=1)[0]
 
-def draw_scoreboard(screen):
-    global total_runs, wickets, balls_bowled
+def record_ball(result):
+    global ball_log
+    if result == "dot":
+        result = "0"
+    if result == "lbw" or result == "bowled" or result == "run_out" or result == "caught":
+        result = "W"
+    ball_log.append(result)
+    if len(ball_log) > 6:
+        ball_log.pop(0)
 
-    # Fonts
-    score_font = pygame.font.SysFont(None, 48)
-    info_font = pygame.font.SysFont(None, 32)
+def draw_scoreboard(screen, batter):
+    # Bottom strip background
+    pygame.draw.rect(screen, (20, 20, 20), (0, 800, 1450, 90))
 
-    # Overs
-    overs = balls_bowled // 6
-    balls = balls_bowled % 6
+    font_big = pygame.font.SysFont(None, 42)
+    font_small = pygame.font.SysFont(None, 36)
 
-    # Panel
-    panel_rect = pygame.Rect(1070, 20, 360, 110)
-    panel_surface = pygame.Surface(panel_rect.size, pygame.SRCALPHA)
-    panel_surface.fill((0, 0, 0, 160))
-    screen.blit(panel_surface, panel_rect.topleft)
+    # Score & overs
+    score_text = f"{batter.upper()}  {total_runs}/{wickets}"
+    overs_text = f"Overs {balls_bowled // 6}.{balls_bowled % 6}"
 
-    # Border
-    pygame.draw.rect(screen, (0, 135, 245), panel_rect, 3, border_radius=10)
+    screen.blit(font_big.render(score_text, True, (255, 255, 255)), (40, 825))
+    screen.blit(font_small.render(overs_text, True, (200, 200, 200)), (40, 860))
 
-    # Text
-    score_text = f"{total_runs}/{wickets}"
-    overs_text = f"Overs: {overs}.{balls}"
+    # Ball-by-ball display
+    x = 750
+    y = 825
 
-    score_surface = score_font.render(score_text, True, (255, 255, 255))
-    overs_surface = info_font.render(overs_text, True, (200, 200, 200))
+    for ball in ball_log:
+        if ball == "W":
+            color = (235, 64, 52)
+        elif ball in ["4", "6"]:
+            color = (0, 200, 0)
+        else:
+            color = (255, 255, 255)
 
-    screen.blit(score_surface, (1090, 40))
-    screen.blit(overs_surface, (1090, 85))
+        text = font_big.render(ball, True, color)
+        screen.blit(text, (x, y))
+        x += 55
 
 def double_one(screen, toss_result):
-    global final_line, final_length, selected_ball_variation, chosen_shot, bowling_type, run_outcome_values, total_runs, wicket_outcomes, wickets, balls_bowled
-    # Setting up the new screen
+    global final_line, final_length, selected_ball_variation
+    global chosen_shot, bowling_type
+    global run_outcome_values, total_runs
+    global wicket_outcomes, wickets
+    global balls_bowled, paused
+    global length_index, line_index
+
+    paused = False
+    total_runs = 0
+    wickets = 0
+    balls_bowled = 0
+
+    def resume_game():
+        global paused
+        paused = False
+
+    pause_menu = PauseMenu(screen, resume_game)
+
+    length_index = 2
+    line_index = 1
+
     pygame.display.set_caption("Double Player - One Over")
 
+    handle_pause(pause_menu)
     if toss_result == "bowl":
-        user_choose_ball_type("Player 1", screen)
+        batter = "Player 2"
+        bowler = "Player 1"
+
+        user_choose_ball_type(bowler, screen)
+
         balls = 0
+
         while balls < 6:
-            user_choose_line_length("Player 1", screen)
-            user_choose_ball_variation("Player 1", screen)
-            batting("Player 2", screen)
+            handle_pause(pause_menu)
+            user_choose_line_length(bowler, batter, screen)
+            user_choose_ball_variation(bowler, batter, screen)
+
+            batting(batter, screen)
 
             error = check_bowling_error_chances(final_line, final_length)
+
             if error == "wide":
                 show_error(error)
                 total_runs += 1
-                balls_bowled += 1
+                record_ball("Wd")
                 continue
-            else:
-                table = get_outcome_table(bowling_type, is_good_shot(chosen_shot, final_length, final_line), final_length)
-                outcome = pick_outcome(table[chosen_shot])
-                print(outcome)
+
+            table = get_outcome_table(bowling_type, is_good_shot(chosen_shot, final_length, final_line), final_length)
+
+            outcome = pick_outcome(table[chosen_shot])
 
             if outcome in run_outcome_values:
                 total_runs += run_outcome_values[outcome]
@@ -937,30 +1093,49 @@ def double_one(screen, toss_result):
 
             balls += 1
             balls_bowled += 1
-            draw_scoreboard(screen)
 
-    elif toss_result == "bat":
-        user_choose_ball_type("Player 2", screen)
+            record_ball(outcome)
+            draw_scoreboard(screen, batter)
+
+    else:
+        batter = "Player 1"
+        bowler = "Player 2"
+
+        handle_pause(pause_menu)
+        user_choose_ball_type(bowler, screen)
+
         balls = 0
+
         while balls < 6:
-            user_choose_line_length("Player 2", screen)
-            user_choose_ball_variation("Player 2", screen)
-            batting("Player 1", screen)
+            handle_pause(pause_menu)
+            user_choose_line_length(bowler, batter, screen)
+            user_choose_ball_variation(bowler, batter, screen)
+
+            batting(batter, screen)
 
             error = check_bowling_error_chances(final_line, final_length)
+
             if error == "wide":
                 show_error(error)
                 total_runs += 1
-                balls_bowled += 1
+                record_ball("Wd")
                 continue
-            else:
-                table = get_outcome_table(bowling_type, is_good_shot(chosen_shot, final_length, final_line), final_length)
-                outcome = pick_outcome(table[chosen_shot])
-                print(outcome)
+
+            table = get_outcome_table(bowling_type, is_good_shot(chosen_shot, final_length, final_line), final_length)
+
+            outcome = pick_outcome(table[chosen_shot])
+
+            if outcome in run_outcome_values:
+                total_runs += run_outcome_values[outcome]
+
+            if outcome in wicket_outcomes:
+                wickets += 1
 
             balls += 1
             balls_bowled += 1
-            draw_scoreboard(screen)
+
+            record_ball(outcome)
+            draw_scoreboard(screen, batter)
 
 def double_two(screen, toss_result):
     pass

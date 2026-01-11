@@ -59,8 +59,44 @@ class CircleButton:
 title_font = pygame.font.SysFont(None, 100)
 player_font = pygame.font.SysFont(None, 50)
 
+# Importing the videos for my outcomes
+dot_ball = cv2.VideoCapture("outcome_videos/DotBall.mov")
+one_run = cv2.VideoCapture("outcome_videos/1run.mov")
+two_runs = cv2.VideoCapture("outcome_videos/2runs.mov")
+three_runs = cv2.VideoCapture("outcome_videos/3runs.mov")
+four_runs = cv2.VideoCapture("outcome_videos/4runs.mov")
+six_runs = cv2.VideoCapture("outcome_videos/6runs.mov")
+
+wide = cv2.VideoCapture("outcome_videos/Wide.mov")
+
+bowled = cv2.VideoCapture("outcome_videos/BowledOut.mov")
+caught = cv2.VideoCapture("outcome_videos/CaughtOut.mov")
+lbw = cv2.VideoCapture("outcome_videos/LBW.mov")
+run_out = cv2.VideoCapture("outcome_videos/RunOut.mov")
+
 # Chosen bowling type
 bowling_type = ""
+
+# Scoreboard Variables
+total_runs = 0
+wickets = 0
+balls_bowled = 0
+
+run_outcome_values = {
+    "dot": 0,
+    "1": 1,
+    "2": 2,
+    "3": 3,
+    "4": 4,
+    "6": 6,
+}
+
+wicket_outcomes = [
+    "bowled",
+    "caught",
+    "lbw",
+    "run_out",
+]
 
 # Buttons for selecting line and length
 up_button = CircleButton(200, 500, 40, "^")
@@ -151,8 +187,7 @@ lines = ["leg_stump", "stumps", "outside_off"]
 length_index = 2
 line_index = 1
 
-# Bowling errors chances
-no_ball_chance = 2
+# Wide chances
 wide_chance = {
     "outside_off": {
         "short": 6,
@@ -491,11 +526,7 @@ def is_good_shot(shot, length, line):
     )
 
 def check_bowling_error_chances(line, length):
-    global no_ball_chance, wide_chance
-
-    # Checking for no ball
-    if random.randint(1, 100) <= no_ball_chance:
-        return "no_ball"
+    global wide_chance
 
     # Checking for wide
     current_wide_chance = wide_chance[line][length]
@@ -635,6 +666,7 @@ def user_choose_line_length(bowler, screen):
         target_y = length_positions[current_length]
 
         screen.blit(pitch, (0, 0))
+        draw_scoreboard(screen)
         draw_target_circle(screen, target_x, target_y)
 
         mouse_pos = pygame.mouse.get_pos()
@@ -714,6 +746,7 @@ def user_choose_ball_variation(bowler, screen):
                             show_bowler = False
 
         screen.blit(pitch, (0, 0))
+        draw_scoreboard(screen)
         draw_target_circle(screen, target_x, target_y)
 
         mouse_pos = pygame.mouse.get_pos()
@@ -797,7 +830,7 @@ def batting(batter, screen):
                         running = False
 
         screen.blit(pitch, (0, 0))
-
+        draw_scoreboard(screen)
         draw_target_circle(screen, target_x, target_y)
 
         mouse_pos = pygame.mouse.get_pos()
@@ -823,10 +856,7 @@ def batting(batter, screen):
         clock.tick(38)
 
 def show_error(error):
-    if error == "wide":
-        print("Wide")
-    elif error == "no_ball":
-        print("No Ball")
+    print("Wide")
 
 def get_outcome_table(bowl_type, is_good, length):
     """
@@ -845,38 +875,92 @@ def pick_outcome(probabilities):
     weights = list(probabilities.values())
     return random.choices(outcomes, weights=weights, k=1)[0]
 
+def draw_scoreboard(screen):
+    global total_runs, wickets, balls_bowled
+
+    # Fonts
+    score_font = pygame.font.SysFont(None, 48)
+    info_font = pygame.font.SysFont(None, 32)
+
+    # Overs
+    overs = balls_bowled // 6
+    balls = balls_bowled % 6
+
+    # Panel
+    panel_rect = pygame.Rect(1070, 20, 360, 110)
+    panel_surface = pygame.Surface(panel_rect.size, pygame.SRCALPHA)
+    panel_surface.fill((0, 0, 0, 160))
+    screen.blit(panel_surface, panel_rect.topleft)
+
+    # Border
+    pygame.draw.rect(screen, (0, 135, 245), panel_rect, 3, border_radius=10)
+
+    # Text
+    score_text = f"{total_runs}/{wickets}"
+    overs_text = f"Overs: {overs}.{balls}"
+
+    score_surface = score_font.render(score_text, True, (255, 255, 255))
+    overs_surface = info_font.render(overs_text, True, (200, 200, 200))
+
+    screen.blit(score_surface, (1090, 40))
+    screen.blit(overs_surface, (1090, 85))
+
 def double_one(screen, toss_result):
-    global final_line, final_length, selected_ball_variation, chosen_shot
+    global final_line, final_length, selected_ball_variation, chosen_shot, bowling_type, run_outcome_values, total_runs, wicket_outcomes, wickets, balls_bowled
     # Setting up the new screen
     pygame.display.set_caption("Double Player - One Over")
 
     if toss_result == "bowl":
         user_choose_ball_type("Player 1", screen)
-        user_choose_line_length("Player 1", screen)
-        user_choose_ball_variation("Player 1", screen)
-        batting("Player 2", screen)
+        balls = 0
+        while balls < 6:
+            user_choose_line_length("Player 1", screen)
+            user_choose_ball_variation("Player 1", screen)
+            batting("Player 2", screen)
 
-        error = check_bowling_error_chances(final_line, final_length)
-        if error == "wide" or error == "no_ball":
-            show_error(error)
-        else:
-            table = get_outcome_table(bowling_type, is_good_shot(chosen_shot, final_length, final_line), final_length)
-            outcome = pick_outcome(table[chosen_shot])
-            print(outcome)
+            error = check_bowling_error_chances(final_line, final_length)
+            if error == "wide":
+                show_error(error)
+                total_runs += 1
+                balls_bowled += 1
+                continue
+            else:
+                table = get_outcome_table(bowling_type, is_good_shot(chosen_shot, final_length, final_line), final_length)
+                outcome = pick_outcome(table[chosen_shot])
+                print(outcome)
+
+            if outcome in run_outcome_values:
+                total_runs += run_outcome_values[outcome]
+
+            if outcome in wicket_outcomes:
+                wickets += 1
+
+            balls += 1
+            balls_bowled += 1
+            draw_scoreboard(screen)
 
     elif toss_result == "bat":
         user_choose_ball_type("Player 2", screen)
-        user_choose_line_length("Player 2", screen)
-        user_choose_ball_variation("Player 2", screen)
-        batting("Player 1", screen)
+        balls = 0
+        while balls < 6:
+            user_choose_line_length("Player 2", screen)
+            user_choose_ball_variation("Player 2", screen)
+            batting("Player 1", screen)
 
-        error = check_bowling_error_chances(final_line, final_length)
-        if error == "wide" or error == "no_ball":
-            show_error(error)
-        else:
-            table = get_outcome_table(bowling_type, is_good_shot(chosen_shot, final_length, final_line), final_length)
-            outcome = pick_outcome(table[chosen_shot])
-            print(outcome)
+            error = check_bowling_error_chances(final_line, final_length)
+            if error == "wide":
+                show_error(error)
+                total_runs += 1
+                balls_bowled += 1
+                continue
+            else:
+                table = get_outcome_table(bowling_type, is_good_shot(chosen_shot, final_length, final_line), final_length)
+                outcome = pick_outcome(table[chosen_shot])
+                print(outcome)
+
+            balls += 1
+            balls_bowled += 1
+            draw_scoreboard(screen)
 
 def double_two(screen, toss_result):
     pass

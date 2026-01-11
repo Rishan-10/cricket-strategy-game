@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="07a9e0e9-f222-4f85-936c-adf8bba548b1" name="Changes" comment="Split the bowling function into 3 different functions and added a table for the probabilities of when a good shot is chosen against a pace bowler.">
+    <list default="true" id="07a9e0e9-f222-4f85-936c-adf8bba548b1" name="Changes" comment="Added all the probability tables, made a function to use the right probability table and another function to get the outcome.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/double_player.py" beforeDir="false" afterPath="$PROJECT_DIR$/double_player.py" afterDir="false" />
     </list>
@@ -46,18 +46,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Python.double_player.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.single_player.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python.double_player.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.single_player.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -265,7 +265,15 @@
       <option name="project" value="LOCAL" />
       <updated>1767720645419</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="Added all the probability tables, made a function to use the right probability table and another function to get the outcome.">
+      <option name="closed" value="true" />
+      <created>1767811337238</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1767811337238</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -289,6 +297,7 @@
     <MESSAGE value="Added a function to check if the shot played is a good shot." />
     <MESSAGE value="User Interface changes." />
     <MESSAGE value="Split the bowling function into 3 different functions and added a table for the probabilities of when a good shot is chosen against a pace bowler." />
-    <option name="LAST_COMMIT_MESSAGE" value="Split the bowling function into 3 different functions and added a table for the probabilities of when a good shot is chosen against a pace bowler." />
+    <MESSAGE value="Added all the probability tables, made a function to use the right probability table and another function to get the outcome." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added all the probability tables, made a function to use the right probability table and another function to get the outcome." />
   </component>
 </project>

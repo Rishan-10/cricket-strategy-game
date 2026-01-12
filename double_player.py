@@ -88,9 +88,12 @@ paused = False
 bowling_type = ""
 
 # Scoreboard Variables
-total_runs = 0
-wickets = 0
+total_runs_1 = 0
+wickets_1 = 0
 balls_bowled = 0
+
+total_runs_2 = 0
+wickets_2 = 0
 
 run_outcome_values = {
     "dot": 0,
@@ -107,6 +110,9 @@ wicket_outcomes = [
     "lbw",
     "run_out",
 ]
+
+# Continue button
+continue_button = RectButton(615, 445, 220, 70, "Continue")
 
 # Buttons for selecting line and length
 up_button = CircleButton(200, 500, 40, "^")
@@ -168,6 +174,9 @@ square_cut = CircleButton(1350, 380, 40, "SQUARE CUT", "square_cut")
 
 # List with all the shots
 all_shots = [forward_defence, sweep, reverse_sweep, scoop, cover_drive, straight_drive, flick, leave, backward_defence, pull_shot, square_cut, upper_cut]
+
+# Button to return to main menu
+main_menu_button = RectButton(575, 445, 300, 100, "Main Menu")
 
 # Bowling Final choices of the user
 final_length = ""
@@ -523,6 +532,20 @@ BAD_TABLES = {
     },
 }
 
+# Values matched to videos
+outcome_videos = {
+    "dot": dot_ball,
+    "1": one_run,
+    "2": two_runs,
+    "3": three_runs,
+    "4": four_runs,
+    "6": six_runs,
+    "bowled": bowled,
+    "caught": caught,
+    "lbw": lbw,
+    "run_out": run_out,
+}
+
 def is_good_shot(shot, length, line):
     return (
         shot in good_shot_zones and
@@ -623,8 +646,7 @@ def user_choose_ball_type(bowler, screen):
                     bowling_type = "off_spin"
                     show_bowler = False
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if pause_button_rect.collidepoint(event.pos):
+                if pause_button_rect.collidepoint(mouse_pos):
                     screen.blit(blurred_pitch, (0, 0))
 
                     overlay = pygame.Surface((1450, 890))
@@ -665,8 +687,8 @@ def user_choose_ball_type(bowler, screen):
 
             return
 
-def user_choose_line_length(bowler, batter, screen):
-    global line_index, length_index, final_line, final_length, target_y, target_x, player_font, paused
+def user_choose_line_length(bowler, batter, screen, total_runs, wickets):
+    global line_index, length_index, final_line, final_length, target_y, target_x, player_font, paused, total_runs_1, wickets_1
 
     running = True
     clock = pygame.time.Clock()
@@ -712,8 +734,7 @@ def user_choose_line_length(bowler, batter, screen):
                     final_line = lines[line_index]
                     show_bowler = False
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if pause_button_rect.collidepoint(event.pos):
+                if pause_button_rect.collidepoint(mouse_pos):
                     screen.blit(blurred_pitch, (0, 0))
 
                     overlay = pygame.Surface((1450, 890))
@@ -734,7 +755,7 @@ def user_choose_line_length(bowler, batter, screen):
 
         screen.blit(pitch, (0, 0))
         screen.blit(pause_button, pause_button_rect)
-        draw_scoreboard(screen, batter)
+        draw_scoreboard(screen, batter, total_runs, wickets)
         draw_target_circle(screen, target_x, target_y)
 
         mouse_pos = pygame.mouse.get_pos()
@@ -758,8 +779,8 @@ def user_choose_line_length(bowler, batter, screen):
 
             return
 
-def user_choose_ball_variation(bowler, batter, screen):
-    global selected_ball_variation, bowling_type, pace_buttons, leg_spin_buttons, off_spin_buttons, player_font, target_y, target_x, paused
+def user_choose_ball_variation(bowler, batter, screen, total_runs, wickets):
+    global selected_ball_variation, bowling_type, pace_buttons, leg_spin_buttons, off_spin_buttons, player_font, target_y, target_x, paused, total_runs_1, wickets_1
 
     running = True
     clock = pygame.time.Clock()
@@ -824,8 +845,7 @@ def user_choose_ball_variation(bowler, batter, screen):
                         if selected_ball_variation != "":
                             show_bowler = False
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if pause_button_rect.collidepoint(event.pos):
+                if pause_button_rect.collidepoint(mouse_pos):
                     screen.blit(blurred_pitch, (0, 0))
 
                     overlay = pygame.Surface((1450, 890))
@@ -839,7 +859,7 @@ def user_choose_ball_variation(bowler, batter, screen):
 
         screen.blit(pitch, (0, 0))
         screen.blit(pause_button, pause_button_rect)
-        draw_scoreboard(screen, batter)
+        draw_scoreboard(screen, batter, total_runs, wickets)
         draw_target_circle(screen, target_x, target_y)
 
         mouse_pos = pygame.mouse.get_pos()
@@ -902,7 +922,7 @@ def user_choose_ball_variation(bowler, batter, screen):
 
             return
 
-def batting(batter, screen):
+def batting(batter, screen, total_runs, wickets):
     global all_shots, chosen_shot, target_x, target_y, selected_ball_variation, player_font, paused
     running = True
     clock = pygame.time.Clock()
@@ -932,8 +952,7 @@ def batting(batter, screen):
                         chosen_shot = button.shot_id
                         running = False
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if pause_button_rect.collidepoint(event.pos):
+                if pause_button_rect.collidepoint(mouse_pos):
                     screen.blit(blurred_pitch, (0, 0))
 
                     overlay = pygame.Surface((1450, 890))
@@ -947,7 +966,7 @@ def batting(batter, screen):
 
         screen.blit(pitch, (0, 0))
         screen.blit(pause_button, pause_button_rect)
-        draw_scoreboard(screen, batter)
+        draw_scoreboard(screen, batter, total_runs, wickets)
         draw_target_circle(screen, target_x, target_y)
 
         mouse_pos = pygame.mouse.get_pos()
@@ -973,8 +992,30 @@ def batting(batter, screen):
         pygame.display.update()
         clock.tick(38)
 
-def show_error(error):
-    print("Wide")
+def show_error(screen):
+    global wide
+    video_playing = True
+    clock = pygame.time.Clock()
+    fps = wide.get(cv2.CAP_PROP_FPS)
+    wide.set(cv2.CAP_PROP_POS_FRAMES, 0)
+
+    while video_playing:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+        success, frame = wide.read()
+        if not success:
+            break
+
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        frame_surface = pygame.surfarray.make_surface(frame)
+        frame_surface = pygame.transform.rotate(frame_surface, -90)
+
+        screen.blit(frame_surface, (0, 0))
+        pygame.display.update()
+        clock.tick(fps)
 
 def get_outcome_table(bowl_type, is_good, length):
     """
@@ -1003,7 +1044,7 @@ def record_ball(result):
     if len(ball_log) > 6:
         ball_log.pop(0)
 
-def draw_scoreboard(screen, batter):
+def draw_scoreboard(screen, batter, total_runs, wickets):
     # Bottom strip background
     pygame.draw.rect(screen, (20, 20, 20), (0, 800, 1450, 90))
 
@@ -1033,18 +1074,129 @@ def draw_scoreboard(screen, batter):
         screen.blit(text, (x, y))
         x += 55
 
+def show_outcome(screen, outcome):
+    global outcome_videos
+
+    video_playing = True
+    clock = pygame.time.Clock()
+
+    video = outcome_videos[outcome]
+    fps = video.get(cv2.CAP_PROP_FPS)
+    video.set(cv2.CAP_PROP_POS_FRAMES, 0)
+
+    while video_playing:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+        success, frame = video.read()
+        if not success:
+            break
+
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        frame_surface = pygame.surfarray.make_surface(frame)
+        frame_surface = pygame.transform.rotate(frame_surface, -90)
+
+        screen.blit(frame_surface, (0, 0))
+        pygame.display.update()
+        clock.tick(fps)
+
+def first_innings(screen):
+    global title_font, total_runs_1, wickets_1, continue_button
+    clock = pygame.time.Clock()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+                break
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if continue_button.is_clicked(mouse_pos):
+                    return
+
+        mouse_pos = pygame.mouse.get_pos()
+
+        player_1_score = f"Player 1 scored: {total_runs_1}/{wickets_1}"
+        player_1_score_surface = title_font.render(player_1_score, True, (255, 255, 255))
+        player_1_score_rect = player_1_score_surface.get_rect(center=(725, 148))
+
+        runs_needed = f"Player 2 needs {total_runs_1 + 1} runs to win."
+        runs_needed_surface = title_font.render(runs_needed, True, (255, 255, 255))
+        runs_needed_rect = runs_needed_surface.get_rect(center=(725, 275))
+
+        screen.blit(blurred_pitch, (0, 0))
+        screen.blit(player_1_score_surface, player_1_score_rect)
+        screen.blit(runs_needed_surface, runs_needed_rect)
+
+        hovered = continue_button.is_clicked(mouse_pos)
+        continue_button.draw(screen, hovered)
+
+        pygame.display.update()
+        clock.tick(38)
+
+def end_game(screen, batter, bowler):
+    global title_font, total_runs_1, wickets_1, total_runs_2, wickets_2, main_menu_button
+    clock = pygame.time.Clock()
+    winner = ""
+    score = ""
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+                break
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if main_menu_button.is_clicked(mouse_pos):
+                    return
+
+        mouse_pos = pygame.mouse.get_pos()
+
+        if total_runs_1 > total_runs_2:
+            winner = bowler
+            score = f"{total_runs_1 - total_runs_2} runs."
+        elif total_runs_2 > total_runs_1:
+            winner = batter
+            score = f"{10 - wickets_2} wickets."
+        else:
+            winner = "Tie"
+
+        if winner != "Tie":
+            show_winner = f"{winner} won by {score}"
+        else:
+            show_winner = f"The game ended in a tie!"
+
+        show_winner_surface = title_font.render(show_winner, True, (255, 255, 255))
+        show_winner_rect = show_winner_surface.get_rect(center=(725, 148))
+
+        screen.blit(blurred_pitch, (0, 0))
+        screen.blit(show_winner_surface, show_winner_rect)
+
+        hovered = main_menu_button.is_clicked(mouse_pos)
+        main_menu_button.draw(screen, hovered)
+
+        pygame.display.update()
+        clock.tick(38)
+
 def double_one(screen, toss_result):
     global final_line, final_length, selected_ball_variation
     global chosen_shot, bowling_type
-    global run_outcome_values, total_runs
-    global wicket_outcomes, wickets
+    global run_outcome_values, total_runs_1
+    global wicket_outcomes, wickets_1
     global balls_bowled, paused
     global length_index, line_index
+    global total_runs_2, wickets_2, ball_log
 
     paused = False
-    total_runs = 0
-    wickets = 0
+    total_runs_1 = 0
+    wickets_1 = 0
     balls_bowled = 0
+    total_runs_2 = 0
+    wickets_2 = 0
 
     def resume_game():
         global paused
@@ -1068,16 +1220,16 @@ def double_one(screen, toss_result):
 
         while balls < 6:
             handle_pause(pause_menu)
-            user_choose_line_length(bowler, batter, screen)
-            user_choose_ball_variation(bowler, batter, screen)
+            user_choose_line_length(bowler, batter, screen, total_runs_1, wickets_1)
+            user_choose_ball_variation(bowler, batter, screen, total_runs_1, wickets_1)
 
-            batting(batter, screen)
+            batting(batter, screen, total_runs_1, wickets_1)
 
             error = check_bowling_error_chances(final_line, final_length)
 
             if error == "wide":
-                show_error(error)
-                total_runs += 1
+                show_error(screen)
+                total_runs_1 += 1
                 record_ball("Wd")
                 continue
 
@@ -1086,16 +1238,17 @@ def double_one(screen, toss_result):
             outcome = pick_outcome(table[chosen_shot])
 
             if outcome in run_outcome_values:
-                total_runs += run_outcome_values[outcome]
+                total_runs_1 += run_outcome_values[outcome]
 
             if outcome in wicket_outcomes:
-                wickets += 1
+                wickets_1 += 1
 
             balls += 1
             balls_bowled += 1
 
             record_ball(outcome)
-            draw_scoreboard(screen, batter)
+            show_outcome(screen, outcome)
+            draw_scoreboard(screen, batter, total_runs_1, wickets_1)
 
     else:
         batter = "Player 1"
@@ -1108,16 +1261,16 @@ def double_one(screen, toss_result):
 
         while balls < 6:
             handle_pause(pause_menu)
-            user_choose_line_length(bowler, batter, screen)
-            user_choose_ball_variation(bowler, batter, screen)
+            user_choose_line_length(bowler, batter, screen, total_runs_1, wickets_1)
+            user_choose_ball_variation(bowler, batter, screen, total_runs_1, wickets_1)
 
-            batting(batter, screen)
+            batting(batter, screen, total_runs_1, wickets_1)
 
             error = check_bowling_error_chances(final_line, final_length)
 
             if error == "wide":
-                show_error(error)
-                total_runs += 1
+                show_error(screen)
+                total_runs_1 += 1
                 record_ball("Wd")
                 continue
 
@@ -1126,19 +1279,67 @@ def double_one(screen, toss_result):
             outcome = pick_outcome(table[chosen_shot])
 
             if outcome in run_outcome_values:
-                total_runs += run_outcome_values[outcome]
+                total_runs_1 += run_outcome_values[outcome]
 
             if outcome in wicket_outcomes:
-                wickets += 1
+                wickets_1 += 1
 
             balls += 1
             balls_bowled += 1
 
             record_ball(outcome)
-            draw_scoreboard(screen, batter)
+            show_outcome(screen, outcome)
+            draw_scoreboard(screen, batter, total_runs_1, wickets_1)
 
-def double_two(screen, toss_result):
-    pass
+    first_innings(screen)
 
-def double_five(screen, toss_result):
-    pass
+    batter2 = bowler
+    bowler2 = batter
+
+    total_runs_2 = 0
+    wickets_2 = 0
+    ball_log = []
+
+    handle_pause(pause_menu)
+    user_choose_ball_type(bowler, screen)
+
+    balls = 0
+    balls_bowled = 0
+
+    while balls < 6:
+        handle_pause(pause_menu)
+        user_choose_line_length(bowler, batter, screen, total_runs_2, wickets_2)
+        user_choose_ball_variation(bowler, batter, screen, total_runs_2, wickets_2)
+
+        batting(batter, screen, total_runs_2, wickets_2)
+
+        error = check_bowling_error_chances(final_line, final_length)
+
+        if error == "wide":
+            show_error(screen)
+            total_runs_2 += 1
+            record_ball("Wd")
+            continue
+
+        table = get_outcome_table(bowling_type, is_good_shot(chosen_shot, final_length, final_line), final_length)
+
+        outcome = pick_outcome(table[chosen_shot])
+
+        if outcome in run_outcome_values:
+            total_runs_2 += run_outcome_values[outcome]
+
+        if outcome in wicket_outcomes:
+            wickets_2 += 1
+
+        balls += 2
+        balls_bowled += 2
+
+        record_ball(outcome)
+        show_outcome(screen, outcome)
+        draw_scoreboard(screen, batter, total_runs_2, wickets_2)
+
+        if total_runs_2 > total_runs_1:
+            break
+
+    end_game(screen, batter2, bowler2)
+    return

@@ -11,14 +11,13 @@ from sys import exit
 import json
 import os
 import random
-from single_player import single_one, single_two, single_five
-from double_player import double_one, double_two, double_five
+from double_player import double_one
 
 # Setting up pygame
 pygame.init()
 pygame.mixer.init()
 screen = pygame.display.set_mode((1450, 890))
-pygame.display.set_caption("Cricket Strategy Game")
+pygame.display.set_caption("Cricket Super Over Strategy Game")
 clock = pygame.time.Clock()
 running = True
 
@@ -40,10 +39,6 @@ def get_video_frame(video):
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     frame = pygame.surfarray.make_surface(frame.swapaxes(0, 1))
     return frame
-
-# Variable to determine whether the user wants to play single or double player
-# 1 = 1 player, 2 = 2 player
-game_mode = 0
 
 # Variable to determine how many overs the user wants to play
 overs = 0
@@ -143,178 +138,87 @@ def delete_saved_settings():
         pygame.time.set_timer(pygame.USEREVENT + 3, 1500)
 
 # Function for resetting the toss menu
-def reset_toss_menu():
-    toss_menu.clear()
-    toss_menu.add.label("Choose Heads or Tails:", font_size=60)
-    toss_menu.add.button("Heads", heads)
-    toss_menu.add.button("Tails", tails)
-
 def reset_toss_menu_double():
     toss_menu_double.clear()
     toss_menu_double.add.label("Player 1: Choose Heads or Tails", font_size=60)
     toss_menu_double.add.button("Heads", double_heads)
     toss_menu_double.add.button("Tails", double_tails)
 
-# Functions for single and double player mode menus
-def single_player_mode():
-    global game_mode
-    play._open(single_player)
-    game_mode = 1
-def double_player_mode():
-    global game_mode
-    play._open(double_player)
-    game_mode = 2
-
-# Functions for 1 over, 2 overs, and 5 overs for single player
-def single_one_over():
-    global overs
-    reset_toss_menu()
-    overs = 1
-    single_player._open(toss_menu)
-def single_two_overs():
-    global overs
-    reset_toss_menu()
-    overs = 2
-    single_player._open(toss_menu)
-def single_five_overs():
-    global overs
-    reset_toss_menu()
-    overs = 5
-    single_player._open(toss_menu)
-
-# Functions for 1 over, 2 overs, and 5 overs for double player
+# Functions for double player
 def double_one_over():
     global overs
-    reset_toss_menu()
+    reset_toss_menu_double()
     overs = 1
-    double_player._open(toss_menu_double)
-def double_two_overs():
-    global overs
-    reset_toss_menu()
-    overs = 2
-    double_player._open(toss_menu_double)
-def double_five_overs():
-    global overs
-    reset_toss_menu()
-    overs = 5
-    double_player._open(toss_menu_double)
+    play._open(toss_menu_double)
 
 # Functions to know which option the user picked if they won the toss
-def chose_bat():
-    global toss_result, game_mode, overs, screen
+def chose_bat_double():
+    global toss_result, overs, screen
     toss_result = "bat"
-    if game_mode == 1 and overs == 1:
-        single_one(screen, toss_result)
-    elif game_mode == 1 and overs == 2:
-        single_two(screen, toss_result)
-    elif game_mode == 1 and overs == 5:
-        single_five(screen, toss_result)
-    elif game_mode == 2 and overs == 1:
-        double_one(screen, toss_result)
-    elif game_mode == 2 and overs == 2:
-        double_two(screen, toss_result)
-    elif game_mode == 2 and overs == 5:
-        double_five(screen, toss_result)
-def chose_bowl():
-    global toss_result, game_mode, overs, screen
+
+    main_menu.disable()
+    play.close()
+    toss_menu_double.close()
+
+    double_one(screen, toss_result)
+
+    toss_menu_double.close()
+    play.close()
+
+    main_menu.enable()
+    main_menu._open(main_menu)
+def chose_bowl_double():
+    global toss_result, overs, screen
     toss_result = "bowl"
-    if game_mode == 1 and overs == 1:
-        single_one(screen, toss_result)
-    elif game_mode == 1 and overs == 2:
-        single_two(screen, toss_result)
-    elif game_mode == 1 and overs == 5:
-        single_five(screen, toss_result)
-    elif game_mode == 2 and overs == 1:
-        double_one(screen, toss_result)
-    elif game_mode == 2 and overs == 2:
-        double_two(screen, toss_result)
-    elif game_mode == 2 and overs == 5:
-        double_five(screen, toss_result)
+
+    main_menu.disable()
+    play.close()
+    toss_menu_double.close()
+
+    double_one(screen, toss_result)
+
+    toss_menu_double.close()
+    play.close()
+
+    main_menu.enable()
+    main_menu._open(main_menu)
 
 # Heads = 0, Tails = 1
 # Bat = 0, Bowl = 1
 # Function if the user chose heads
-def heads():
-    global toss_result
-    toss_menu.clear()
-    main_menu._open(play)
-    play._open(single_player)
-    single_player._open(toss_menu)
-    if random.randint(0,1) == 0:
-        toss_menu.add.label("You won.")
-        toss_menu.add.label("Do you want to bat or bowl?: ", font_size=80)
-        toss_menu.add.button("Bat", chose_bat)
-        toss_menu.add.button("Bowl", chose_bowl)
-    else:
-        toss_menu.add.label("You lost.")
-        if random.randint(0,1) == 0:
-            toss_menu.add.label("You have to bat.")
-            toss_result = "bat"
-            toss_menu.add.button("Continue", chose_bat)
-        else:
-            toss_menu.add.label("You have to bowl.")
-            toss_result = "bowl"
-            toss_menu.add.button("Continue", chose_bowl)
-
-# Function if the user chose heads
-def tails():
-    global toss_result
-    toss_menu.clear()
-    main_menu._open(play)
-    play._open(single_player)
-    single_player._open(toss_menu)
-    if random.randint(0, 1) == 0:
-        toss_menu.add.label("You lost.")
-        if random.randint(0,1) == 0:
-            toss_menu.add.label("You have to bat.")
-            toss_result = "bat"
-            toss_menu.add.button("Continue", chose_bat)
-        else:
-            toss_menu.add.label("You have to bowl.")
-            toss_result = "bowl"
-            toss_menu.add.button("Continue", chose_bowl)
-    else:
-        toss_menu.add.label("You won.")
-        toss_menu.add.label("Do you want to bat or bowl?: ", font_size=80)
-        toss_menu.add.button("Bat", chose_bat)
-        toss_menu.add.button("Bowl", chose_bowl)
-
-# Function if the user chose heads and is playing double player
 def double_heads():
     toss_menu_double.clear()
     main_menu._open(play)
-    play._open(double_player)
-    double_player._open(toss_menu_double)
+    play._open(toss_menu_double)
 
     # 0 = heads wins, 1 = tails wins
     if random.randint(0, 1) == 0:
         toss_menu_double.add.label("Player 1 won the toss!", font_size=70)
         toss_menu_double.add.label("Choose to bat or bowl:", font_size=60)
-        toss_menu_double.add.button("Bat", chose_bat)
-        toss_menu_double.add.button("Bowl", chose_bowl)
+        toss_menu_double.add.button("Bat", chose_bat_double)
+        toss_menu_double.add.button("Bowl", chose_bowl_double)
     else:
         toss_menu_double.add.label("Player 2 won the toss!", font_size=70)
         toss_menu_double.add.label("Player 2, choose to bat or bowl:", font_size=60)
-        toss_menu_double.add.button("Bat", chose_bowl)
-        toss_menu_double.add.button("Bowl", chose_bat)
+        toss_menu_double.add.button("Bat", chose_bowl_double)
+        toss_menu_double.add.button("Bowl", chose_bat_double)
 
-# Function if the user chose tails and is playing double player
+# Function if the user chose tails
 def double_tails():
     toss_menu_double.clear()
     main_menu._open(play)
-    play._open(double_player)
-    double_player._open(toss_menu_double)
+    play._open(toss_menu_double)
 
     if random.randint(0, 1) == 1:
         toss_menu_double.add.label("Player 1 won the toss!", font_size=70)
         toss_menu_double.add.label("Choose to bat or bowl:", font_size=60)
-        toss_menu_double.add.button("Bat", chose_bat)
-        toss_menu_double.add.button("Bowl", chose_bowl)
+        toss_menu_double.add.button("Bat", chose_bat_double)
+        toss_menu_double.add.button("Bowl", chose_bowl_double)
     else:
         toss_menu_double.add.label("Player 2 won the toss!", font_size=70)
         toss_menu_double.add.label("Player 2, choose to bat or bowl:", font_size=60)
-        toss_menu_double.add.button("Bat", chose_bowl)
-        toss_menu_double.add.button("Bowl", chose_bat)
+        toss_menu_double.add.button("Bat", chose_bowl_double)
+        toss_menu_double.add.button("Bowl", chose_bat_double)
 
 # Making a custom theme for my main menu
 main_custom_theme = pygame_menu.themes.THEME_DARK.copy()
@@ -369,30 +273,7 @@ play_custom_theme.title_font_color = (255, 255, 255)
 
 # Play menu creation
 play = pygame_menu.Menu('Play', 1450, 890, theme=play_custom_theme)
-play.add.button('Single Player Mode', single_player_mode)
-play.add.button('Double Player Mode', double_player_mode)
-
-# Making a custom theme for my single and double player menu
-mode_custom_theme = pygame_menu.themes.THEME_DARK.copy()
-mode_custom_theme.background_color = (0, 0, 0, 0)
-mode_custom_theme.widget_font_size = 70
-mode_custom_theme.widget_padding = 25
-mode_custom_theme.widget_margin = (0, 40)
-mode_custom_theme.title_font_size = 84
-mode_custom_theme.title_bar_style = pygame_menu.widgets.MENUBAR_STYLE_SIMPLE
-mode_custom_theme.title_font_color = (255, 255, 255)
-
-# Single player menu creation
-single_player = pygame_menu.Menu("Single Player Mode", 1450, 890, theme=mode_custom_theme)
-single_player.add.button('1 over', single_one_over)
-single_player.add.button('2 overs', single_two_overs)
-single_player.add.button('5 overs', single_five_overs)
-
-# Double player menu creation
-double_player = pygame_menu.Menu("Double Player Mode", 1450, 890, theme=mode_custom_theme)
-double_player.add.button('1 over', double_one_over)
-double_player.add.button('2 overs', double_two_overs)
-double_player.add.button('5 overs', double_five_overs)
+play.add.button('Double Player Mode', double_one_over)
 
 # Making a custom theme for toss menu
 toss_custom_theme = pygame_menu.themes.THEME_BLUE.copy()
@@ -402,12 +283,6 @@ toss_custom_theme.widget_margin = (0, 40)
 toss_custom_theme.title_font_size = 90
 toss_custom_theme.title_bar_style = pygame_menu.widgets.MENUBAR_STYLE_SIMPLE
 toss_custom_theme.title_font_color = (255, 255, 255)
-
-# Toss menu creation
-toss_menu = pygame_menu.Menu("Toss", 1450, 890, theme=toss_custom_theme, onclose=reset_toss_menu)
-toss_menu.add.label("Choose Heads or Tails:", font_size=80)
-toss_menu.add.button("Heads", heads)
-toss_menu.add.button("Tails", tails)
 
 # Double player toss menu creation
 toss_menu_double = pygame_menu.Menu("Toss (Double Player)", 1450, 890, theme=toss_custom_theme)

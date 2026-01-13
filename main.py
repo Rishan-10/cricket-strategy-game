@@ -157,8 +157,8 @@ def chose_bat_double():
     toss_result = "bat"
 
     main_menu.disable()
-    play.close()
-    toss_menu_double.close()
+    play.disable()
+    toss_menu_double.disable()
 
     double_one(screen, toss_result)
 
@@ -172,8 +172,8 @@ def chose_bowl_double():
     toss_result = "bowl"
 
     main_menu.disable()
-    play.close()
-    toss_menu_double.close()
+    play.disable()
+    toss_menu_double.disable()
 
     double_one(screen, toss_result)
 

@@ -14,13 +14,14 @@ pause_custom_theme.title_bar_style = pygame_menu.widgets.MENUBAR_STYLE_SIMPLE
 pause_custom_theme.title_font_color = (255, 255, 255)
 
 class PauseMenu:
-    def __init__(self, screen, on_resume):
+    def __init__(self, screen, on_resume, main_menu):
         self.screen = screen
         self.enabled = False
 
         self.menu = pygame_menu.Menu(title='Paused',width=1450,height=890,theme=pause_custom_theme)
 
         self.menu.add.button('Resume', on_resume)
+        # self.menu.add.button("Main Menu", main_menu)
         self.menu.add.button('Exit', exit)
 
     def open(self):

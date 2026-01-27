@@ -83,6 +83,7 @@ pause_button = pygame.image.load("menu/pause.png")
 pause_button_rect = pause_button.get_rect(topleft=(1390, 10))
 
 paused = False
+return_main_menu = False
 
 # Chosen bowling type
 bowling_type = ""
@@ -608,7 +609,7 @@ outcome_possibilities = [
 ]
 
 def user_choose_ball_type(bowler, screen):
-    global bowling_type, title_font, player_font, bowling_type_buttons, paused
+    global bowling_type, title_font, player_font, bowling_type_buttons, paused, return_main_menu
 
     running = True
     clock = pygame.time.Clock()
@@ -620,7 +621,14 @@ def user_choose_ball_type(bowler, screen):
         paused = False
         pause_menu.close()
 
-    pause_menu = PauseMenu(screen, on_resume=resume_game)
+    def main_menu():
+        global paused, return_main_menu
+        paused = False
+        return_main_menu = True
+        pause_menu.close()
+        return
+
+    pause_menu = PauseMenu(screen, on_resume=resume_game, main_menu=main_menu)
 
     while running:
         events = pygame.event.get()
@@ -657,6 +665,9 @@ def user_choose_ball_type(bowler, screen):
                     paused = True
                     pause_menu.open()
                     handle_pause(pause_menu)
+
+                    if return_main_menu:
+                        return
 
         mouse_pos = pygame.mouse.get_pos()
 
@@ -703,7 +714,14 @@ def user_choose_line_length(bowler, batter, screen, total_runs, wickets):
         paused = False
         pause_menu.close()
 
-    pause_menu = PauseMenu(screen, on_resume=resume_game)
+    def main_menu():
+        global paused, return_main_menu
+        paused = False
+        return_main_menu = True
+        pause_menu.close()
+        return
+
+    pause_menu = PauseMenu(screen, on_resume=resume_game, main_menu=main_menu)
 
     while running:
         events = pygame.event.get()
@@ -792,7 +810,14 @@ def user_choose_ball_variation(bowler, batter, screen, total_runs, wickets):
         paused = False
         pause_menu.close()
 
-    pause_menu = PauseMenu(screen, on_resume=resume_game)
+    def main_menu():
+        global paused, return_main_menu
+        paused = False
+        return_main_menu = True
+        pause_menu.close()
+        return
+
+    pause_menu = PauseMenu(screen, on_resume=resume_game, main_menu=main_menu)
 
     while running:
         events = pygame.event.get()
@@ -933,7 +958,14 @@ def batting(batter, screen, total_runs, wickets):
         paused = False
         pause_menu.close()
 
-    pause_menu = PauseMenu(screen, on_resume=resume_game)
+    def main_menu():
+        global paused, return_main_menu
+        paused = False
+        return_main_menu = True
+        pause_menu.close()
+        return
+
+    pause_menu = PauseMenu(screen, on_resume=resume_game, main_menu=main_menu)
 
     while running:
         events = pygame.event.get()
@@ -1190,6 +1222,7 @@ def double_one(screen, toss_result):
     global balls_bowled, paused
     global length_index, line_index
     global total_runs_2, wickets_2, ball_log
+    global return_main_menu
 
     paused = False
     total_runs_1 = 0
@@ -1204,7 +1237,14 @@ def double_one(screen, toss_result):
         global paused
         paused = False
 
-    pause_menu = PauseMenu(screen, resume_game)
+    def main_menu():
+        global paused, return_main_menu
+        paused = False
+        return_main_menu = True
+        pause_menu.close()
+        return
+
+    pause_menu = PauseMenu(screen, resume_game, main_menu)
 
     length_index = 2
     line_index = 1
@@ -1212,6 +1252,10 @@ def double_one(screen, toss_result):
     pygame.display.set_caption("Super Over! - Double Player Mode")
 
     handle_pause(pause_menu)
+
+    if return_main_menu:
+        return
+
     if toss_result == "bowl":
         batter = "Player 2"
         bowler = "Player 1"
@@ -1222,6 +1266,10 @@ def double_one(screen, toss_result):
 
         while balls < 6:
             handle_pause(pause_menu)
+
+            if return_main_menu:
+                return
+
             user_choose_line_length(bowler, batter, screen, total_runs_1, wickets_1)
             user_choose_ball_variation(bowler, batter, screen, total_runs_1, wickets_1)
 
@@ -1257,6 +1305,10 @@ def double_one(screen, toss_result):
         bowler = "Player 2"
 
         handle_pause(pause_menu)
+
+        if return_main_menu:
+            return
+
         user_choose_ball_type(bowler, screen)
 
         balls = 0
@@ -1303,6 +1355,10 @@ def double_one(screen, toss_result):
     ball_log = []
 
     handle_pause(pause_menu)
+
+    if return_main_menu:
+        return
+
     user_choose_ball_type(bowler2, screen)
 
     balls = 0
@@ -1310,6 +1366,10 @@ def double_one(screen, toss_result):
 
     while balls < 6:
         handle_pause(pause_menu)
+
+        if return_main_menu:
+            return
+
         user_choose_line_length(bowler2, batter2, screen, total_runs_2, wickets_2)
         user_choose_ball_variation(bowler2, batter2, screen, total_runs_2, wickets_2)
 

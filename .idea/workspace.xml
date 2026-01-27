@@ -4,8 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="07a9e0e9-f222-4f85-936c-adf8bba548b1" name="Changes" comment="Finished Game.">
+    <list default="true" id="07a9e0e9-f222-4f85-936c-adf8bba548b1" name="Changes" comment="Finished Game: 1.1&#10;&#10;Bug Fixes:&#10;Fixed the bug where if the player 2 presses bat after winning the toss, the game does not crash.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/double_player.py" beforeDir="false" afterPath="$PROJECT_DIR$/double_player.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -296,7 +298,15 @@
       <option name="project" value="LOCAL" />
       <updated>1768234675496</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="Finished Game: 1.1&#10;&#10;Bug Fixes:&#10;Fixed the bug where if the player 2 presses bat after winning the toss, the game does not crash.">
+      <option name="closed" value="true" />
+      <created>1768285112852</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1768285112852</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -324,6 +334,7 @@
     <MESSAGE value="Added a scoreboard to be able to track the score while playing." />
     <MESSAGE value="Added a pause button and a pause menu with buttons to resume the match and to exit the game." />
     <MESSAGE value="Finished Game." />
-    <option name="LAST_COMMIT_MESSAGE" value="Finished Game." />
+    <MESSAGE value="Finished Game: 1.1&#10;&#10;Bug Fixes:&#10;Fixed the bug where if the player 2 presses bat after winning the toss, the game does not crash." />
+    <option name="LAST_COMMIT_MESSAGE" value="Finished Game: 1.1&#10;&#10;Bug Fixes:&#10;Fixed the bug where if the player 2 presses bat after winning the toss, the game does not crash." />
   </component>
 </project>

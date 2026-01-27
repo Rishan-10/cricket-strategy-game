@@ -1198,6 +1198,8 @@ def double_one(screen, toss_result):
     total_runs_2 = 0
     wickets_2 = 0
 
+    ball_log = []
+
     def resume_game():
         global paused
         paused = False
@@ -1207,7 +1209,7 @@ def double_one(screen, toss_result):
     length_index = 2
     line_index = 1
 
-    pygame.display.set_caption("Double Player - One Over")
+    pygame.display.set_caption("Super Over! - Double Player Mode")
 
     handle_pause(pause_menu)
     if toss_result == "bowl":
@@ -1301,17 +1303,17 @@ def double_one(screen, toss_result):
     ball_log = []
 
     handle_pause(pause_menu)
-    user_choose_ball_type(bowler, screen)
+    user_choose_ball_type(bowler2, screen)
 
     balls = 0
     balls_bowled = 0
 
     while balls < 6:
         handle_pause(pause_menu)
-        user_choose_line_length(bowler, batter, screen, total_runs_2, wickets_2)
-        user_choose_ball_variation(bowler, batter, screen, total_runs_2, wickets_2)
+        user_choose_line_length(bowler2, batter2, screen, total_runs_2, wickets_2)
+        user_choose_ball_variation(bowler2, batter2, screen, total_runs_2, wickets_2)
 
-        batting(batter, screen, total_runs_2, wickets_2)
+        batting(batter2, screen, total_runs_2, wickets_2)
 
         error = check_bowling_error_chances(final_line, final_length)
 
@@ -1336,7 +1338,7 @@ def double_one(screen, toss_result):
 
         record_ball(outcome)
         show_outcome(screen, outcome)
-        draw_scoreboard(screen, batter, total_runs_2, wickets_2)
+        draw_scoreboard(screen, batter2, total_runs_2, wickets_2)
 
         if total_runs_2 > total_runs_1:
             break

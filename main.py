@@ -17,7 +17,7 @@ from double_player import double_one
 pygame.init()
 pygame.mixer.init()
 screen = pygame.display.set_mode((1450, 890))
-pygame.display.set_caption("Cricket Super Over Strategy Game")
+pygame.display.set_caption("Super Over! - A Cricket Strategy Game")
 clock = pygame.time.Clock()
 running = True
 
@@ -162,8 +162,7 @@ def chose_bat_double():
 
     double_one(screen, toss_result)
 
-    toss_menu_double.close()
-    play.close()
+    toss_menu_double.clear()
 
     main_menu.enable()
     main_menu._open(main_menu)
@@ -177,8 +176,7 @@ def chose_bowl_double():
 
     double_one(screen, toss_result)
 
-    toss_menu_double.close()
-    play.close()
+    toss_menu_double.clear()
 
     main_menu.enable()
     main_menu._open(main_menu)
@@ -231,7 +229,7 @@ main_custom_theme.title_bar_style = pygame_menu.widgets.MENUBAR_STYLE_SIMPLE
 main_custom_theme.title_font_color = (255, 255, 255)
 
 # Main menu creation
-main_menu = pygame_menu.Menu('Cricket Strategy Game', 1450, 890, theme=main_custom_theme)
+main_menu = pygame_menu.Menu('Super Over!', 1450, 890, theme=main_custom_theme)
 main_menu.add.button('Play', game)
 main_menu.add.button('Settings', settings_menu)
 main_menu.add.button('Exit', pygame_menu.events.EXIT)

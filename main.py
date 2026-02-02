@@ -12,6 +12,7 @@ import json
 import os
 import random
 from double_player import double_one
+from single_player import single_one
 
 # Setting up pygame
 pygame.init()
@@ -160,7 +161,7 @@ def chose_bat_double():
     play.disable()
     toss_menu_double.disable()
 
-    double_one(screen, toss_result)
+    double_one(screen, toss_result, handle_music_events)
 
     toss_menu_double.clear()
 
@@ -174,7 +175,7 @@ def chose_bowl_double():
     play.disable()
     toss_menu_double.disable()
 
-    double_one(screen, toss_result)
+    double_one(screen, toss_result, handle_music_events)
 
     toss_menu_double.clear()
 
@@ -293,6 +294,16 @@ arrow = pygame_menu.widgets.LeftArrowSelection(arrow_size=(10, 15))
 
 # Starting the music
 play_music(music_index)
+
+def handle_music_events(event):
+    global music_index
+    if event.type == end_music:
+        music_index += 1
+        if music_index >= len(playlist):
+            music_index = 0
+        pygame.mixer.music.load(playlist[music_index])
+        pygame.mixer.music.play()
+
 
 # Main Game Loop
 while running:

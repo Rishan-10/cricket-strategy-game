@@ -1142,6 +1142,7 @@ def show_outcome(screen, outcome, handle_music_events):
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame_surface = pygame.surfarray.make_surface(frame)
         frame_surface = pygame.transform.rotate(frame_surface, -90)
+        frame_surface = pygame.transform.scale(frame_surface, (1450, 890))
 
         screen.blit(frame_surface, (0, 0))
         pygame.display.update()

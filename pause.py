@@ -22,6 +22,7 @@ class PauseMenu:
 
         self.menu.add.button('Resume', on_resume)
         # self.menu.add.button("Main Menu", main_menu)
+        # self.menu.add.button("Settings", settings_menu)
         self.menu.add.button('Exit', exit)
 
     def open(self):
